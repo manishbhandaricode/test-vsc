@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIP Calculator</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #667085;
+      --primary: #1463ff;
+      --primary-dark: #0d4dcc;
+      --border: #d9e2ef;
+      --success-bg: #ecfdf5;
+      --success-border: #a7f3d0;
+      --shadow: 0 18px 45px rgba(31, 41, 55, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background:
+        radial-gradient(circle at top left, rgba(20, 99, 255, 0.12), transparent 32%),
+        var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .calculator-card {
+      width: min(100%, 480px);
+      padding: 32px;
+      border: 1px solid rgba(217, 226, 239, 0.85);
+      border-radius: 8px;
+      background: var(--card);
+      box-shadow: var(--shadow);
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+      line-height: 1.2;
+    }
+
+    .subtitle {
+      margin: 0 0 28px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    input {
+      width: 100%;
+      min-height: 48px;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font: inherit;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    input:focus {
+      border-color: var(--primary);
+      outline: none;
+      box-shadow: 0 0 0 4px rgba(20, 99, 255, 0.14);
+    }
+
+    button {
+      width: 100%;
+      min-height: 50px;
+      margin-top: 8px;
+      border: 0;
+      border-radius: 8px;
+      background: var(--primary);
+      color: #ffffff;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 700;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    button:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .results {
+      display: none;
+      margin-top: 28px;
+      padding: 18px;
+      border: 1px solid var(--success-border);
+      border-radius: 8px;
+      background: var(--success-bg);
+    }
+
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(16, 185, 129, 0.18);
+    }
+
+    .result-row:last-child {
+      border-bottom: 0;
+    }
+
+    .result-label {
+      color: var(--muted);
+    }
+
+    .result-value {
+      text-align: right;
+      font-weight: 800;
+    }
+
+    @media (max-width: 520px) {
+      body {
+        padding: 16px;
+      }
+
+      .calculator-card {
+        padding: 24px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+
+      .result-row {
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .result-value {
+        text-align: left;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="calculator-card">
+    <h1>SIP Calculator</h1>
+    <p class="subtitle">Estimate your maturity value, invested amount, and wealth gained from monthly investments.</p>
+
+    <form id="sip-form" novalidate>
+      <div class="form-group">
+        <label for="monthly-investment">Monthly Investment Amount</label>
+        <input
+          id="monthly-investment"
+          type="number"
+          min="500"
+          step="100"
+          placeholder="e.g., 5000"
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="annual-return">Expected Annual Return Rate (%)</label>
+        <input
+          id="annual-return"
+          type="number"
+          min="0"
+          step="0.1"
+          placeholder="e.g., 12"
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="investment-years">Investment Period (Years)</label>
+        <input
+          id="investment-years"
+          type="number"
+          min="1"
+          step="1"
+          placeholder="e.g., 10"
+          required
+        >
+      </div>
+
+      <button type="submit">Calculate</button>
+    </form>
+
+    <section class="results" id="results" aria-live="polite">
+      <div class="result-row">
+        <span class="result-label">Total Amount Invested</span>
+        <span class="result-value" id="total-invested">&#8377;0</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Estimated Wealth Gained</span>
+        <span class="result-value" id="wealth-gained">&#8377;0</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Total Maturity Value</span>
+        <span class="result-value" id="maturity-value">&#8377;0</span>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const form = document.getElementById('sip-form');
+    const monthlyInvestmentInput = document.getElementById('monthly-investment');
+    const annualReturnInput = document.getElementById('annual-return');
+    const investmentYearsInput = document.getElementById('investment-years');
+    const results = document.getElementById('results');
+
+    const totalInvestedOutput = document.getElementById('total-invested');
+    const wealthGainedOutput = document.getElementById('wealth-gained');
+    const maturityValueOutput = document.getElementById('maturity-value');
+
+    const currencyFormatter = new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      maximumFractionDigits: 0
+    });
+
+    function formatCurrency(amount) {
+      return currencyFormatter.format(Math.round(amount));
+    }
+
+    function validateInputs(monthlyInvestmentRaw, annualReturnRaw, investmentYearsRaw) {
+      const hasEmptyField = [monthlyInvestmentRaw, annualReturnRaw, investmentYearsRaw]
+        .some((value) => value.trim() === '');
+
+      if (hasEmptyField) {
+        alert('Please fill in all fields before calculating.');
+        return false;
+      }
+
+      const monthlyInvestment = Number(monthlyInvestmentRaw);
+      const annualReturn = Number(annualReturnRaw);
+      const investmentYears = Number(investmentYearsRaw);
+
+      if (
+        Number.isNaN(monthlyInvestment) ||
+        Number.isNaN(annualReturn) ||
+        Number.isNaN(investmentYears)
+      ) {
+        alert('Please fill in all fields before calculating.');
+        return false;
+      }
+
+      if (monthlyInvestment < 500) {
+        alert('Monthly investment amount must be at least Rs. 500.');
+        return false;
+      }
+
+      if (annualReturn < 0 || investmentYears <= 0) {
+        alert('Return rate cannot be negative and investment period must be greater than zero.');
+        return false;
+      }
+
+      return true;
+    }
+
+    function calculateSip(monthlyInvestment, annualReturn, investmentYears) {
+      const monthlyRate = annualReturn / 12 / 100;
+      const totalMonths = investmentYears * 12;
+      const totalInvested = monthlyInvestment * totalMonths;
+
+      // If the expected return is 0%, maturity value is simply the total invested amount.
+      const maturityValue = monthlyRate === 0
+        ? totalInvested
+        : monthlyInvestment * (((1 + monthlyRate) ** totalMonths - 1) / monthlyRate) * (1 + monthlyRate);
+
+      return {
+        totalInvested,
+        wealthGained: maturityValue - totalInvested,
+        maturityValue
+      };
+    }
+
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
+
+      if (!validateInputs(monthlyInvestmentInput.value, annualReturnInput.value, investmentYearsInput.value)) {
+        results.style.display = 'none';
+        return;
+      }
+
+      const monthlyInvestment = Number(monthlyInvestmentInput.value);
+      const annualReturn = Number(annualReturnInput.value);
+      const investmentYears = Number(investmentYearsInput.value);
+
+      const sipResult = calculateSip(monthlyInvestment, annualReturn, investmentYears);
+
+      totalInvestedOutput.textContent = formatCurrency(sipResult.totalInvested);
+      wealthGainedOutput.textContent = formatCurrency(sipResult.wealthGained);
+      maturityValueOutput.textContent = formatCurrency(sipResult.maturityValue);
+      results.style.display = 'block';
+    });
+  </script>
+</body>
+</html>
