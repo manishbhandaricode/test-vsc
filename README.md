@@ -1,6 +1,14 @@
-# SIP Calculator
+# Step-up SIP Calculator
 
-A simple, responsive SIP calculator built with HTML, CSS, and vanilla JavaScript.
+A polished, responsive SIP calculator built with HTML, CSS, and vanilla JavaScript.
+
+## Features
+
+- Regular SIP and step-up SIP modes
+- Live sliders and numeric inputs
+- Total invested, wealth gained, maturity value, final monthly SIP, growth multiple, and tenure outputs
+- Mobile-friendly responsive UI
+- Vercel-ready static deployment
 
 ## Local Preview
 
