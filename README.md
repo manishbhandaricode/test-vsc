@@ -6,6 +6,8 @@ A polished, responsive SIP calculator built with HTML, CSS, and vanilla JavaScri
 
 - Regular SIP and step-up SIP modes
 - Live sliders and numeric inputs
+- Light and dark mode with saved preference
+- Dynamic corpus curve, gain-share donut, and investment mix bar
 - Total invested, wealth gained, maturity value, final monthly SIP, growth multiple, and tenure outputs
 - Mobile-friendly responsive UI
 - Vercel-ready static deployment

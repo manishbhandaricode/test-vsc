@@ -12,6 +12,7 @@
       --bg: #f5f7f4;
       --panel: #ffffff;
       --panel-soft: #f9fbf7;
+      --glass: rgba(255, 255, 255, 0.88);
       --ink: #101513;
       --muted: #647067;
       --line: #dfe7dd;
@@ -24,6 +25,22 @@
       --radius: 8px;
     }
 
+    [data-theme="dark"] {
+      --bg: #08110f;
+      --panel: #101c18;
+      --panel-soft: #13231f;
+      --glass: rgba(16, 28, 24, 0.9);
+      --ink: #f4fbf5;
+      --muted: #a4b5ab;
+      --line: #294039;
+      --accent: #3fd69b;
+      --accent-strong: #74efbd;
+      --accent-soft: #16382c;
+      --gold: #f2c14e;
+      --danger: #ff8a80;
+      --shadow: 0 24px 70px rgba(0, 0, 0, 0.42);
+    }
+
     * {
       box-sizing: border-box;
     }
@@ -32,15 +49,21 @@
       color-scheme: light;
     }
 
+    html[data-theme="dark"] {
+      color-scheme: dark;
+    }
+
     body {
       margin: 0;
       min-height: 100vh;
       background:
+        radial-gradient(circle at 12% 18%, rgba(63, 214, 155, 0.16), transparent 26%),
         linear-gradient(135deg, rgba(18, 107, 79, 0.12), transparent 34%),
         linear-gradient(315deg, rgba(211, 158, 40, 0.12), transparent 30%),
         var(--bg);
       color: var(--ink);
       font-family: "Space Grotesk", "Inter Tight", Arial, sans-serif;
+      transition: background 0.25s ease, color 0.25s ease;
     }
 
     button,
@@ -54,6 +77,62 @@
       padding: 28px 20px;
     }
 
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .brand-mark {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .brand-icon {
+      display: grid;
+      width: 36px;
+      height: 36px;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      color: var(--accent);
+      box-shadow: 0 8px 20px rgba(16, 21, 19, 0.08);
+    }
+
+    .theme-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--panel);
+      color: var(--ink);
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 800;
+      box-shadow: 0 8px 20px rgba(16, 21, 19, 0.08);
+    }
+
+    .theme-icon {
+      display: grid;
+      width: 24px;
+      height: 24px;
+      place-items: center;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent-strong);
+    }
+
     .hero {
       display: grid;
       grid-template-columns: minmax(0, 0.9fr) minmax(320px, 1.1fr);
@@ -65,9 +144,10 @@
     .calculator-panel {
       border: 1px solid rgba(223, 231, 221, 0.9);
       border-radius: var(--radius);
-      background: rgba(255, 255, 255, 0.88);
+      background: var(--glass);
       box-shadow: var(--shadow);
       backdrop-filter: blur(18px);
+      transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
     }
 
     .summary-panel {
@@ -122,6 +202,91 @@
       margin-top: 34px;
       padding-top: 28px;
       border-top: 1px solid var(--line);
+    }
+
+    .growth-visual {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 132px;
+      gap: 18px;
+      align-items: center;
+      margin-top: 26px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel-soft);
+    }
+
+    .sparkline-card {
+      min-width: 0;
+    }
+
+    .sparkline-card span,
+    .donut-card span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .sparkline {
+      display: block;
+      width: 100%;
+      height: 108px;
+      margin-top: 12px;
+      overflow: visible;
+    }
+
+    .sparkline-grid {
+      stroke: var(--line);
+      stroke-width: 1;
+    }
+
+    .sparkline-area {
+      fill: var(--accent-soft);
+      opacity: 0.86;
+    }
+
+    .sparkline-path {
+      fill: none;
+      stroke: var(--accent);
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-width: 4;
+    }
+
+    .donut-card {
+      display: grid;
+      justify-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .donut {
+      width: 112px;
+      height: 112px;
+      transform: rotate(-90deg);
+    }
+
+    .donut-bg {
+      fill: none;
+      stroke: var(--line);
+      stroke-width: 12;
+    }
+
+    .donut-fill {
+      fill: none;
+      stroke: var(--gold);
+      stroke-linecap: round;
+      stroke-width: 12;
+      transition: stroke-dasharray 0.25s ease;
+    }
+
+    .donut-value {
+      color: var(--ink);
+      font-family: "Inter Tight", "Space Grotesk", Arial, sans-serif;
+      font-size: 22px;
+      font-weight: 800;
     }
 
     .metric-label {
@@ -184,6 +349,7 @@
       overflow: hidden;
       border-radius: 999px;
       background: var(--line);
+      transition: grid-template-columns 0.25s ease;
     }
 
     .invested-bar {
@@ -225,6 +391,43 @@
       padding: 26px;
     }
 
+    .panel-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .panel-heading h2 {
+      margin: 0;
+      font-family: "Inter Tight", "Space Grotesk", Arial, sans-serif;
+      font-size: 24px;
+      letter-spacing: 0;
+    }
+
+    .market-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      min-height: 34px;
+      padding: 7px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--panel-soft);
+      color: var(--accent-strong);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .market-pill::before {
+      width: 14px;
+      height: 14px;
+      border-radius: 4px;
+      background: linear-gradient(135deg, var(--accent), var(--gold));
+      content: "";
+    }
+
     .mode-switch {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -259,10 +462,26 @@
     }
 
     .field-card {
+      position: relative;
+      overflow: hidden;
       padding: 18px;
       border: 1px solid var(--line);
       border-radius: var(--radius);
       background: var(--panel);
+    }
+
+    .field-card::after {
+      position: absolute;
+      right: 14px;
+      bottom: 12px;
+      width: 52px;
+      height: 24px;
+      border-radius: 999px;
+      background:
+        linear-gradient(135deg, transparent 48%, rgba(18, 107, 79, 0.22) 49% 53%, transparent 54%),
+        linear-gradient(90deg, rgba(211, 158, 40, 0.16), rgba(18, 107, 79, 0.16));
+      content: "";
+      pointer-events: none;
     }
 
     .field-top {
@@ -430,6 +649,16 @@
         padding: 10px;
       }
 
+      .topbar {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .theme-toggle {
+        justify-content: center;
+        width: 100%;
+      }
+
       .summary-panel,
       .calculator-panel {
         border-radius: 0;
@@ -447,8 +676,13 @@
 
       .mini-stats,
       .insight-strip,
-      .actions {
+      .actions,
+      .growth-visual {
         grid-template-columns: 1fr;
+      }
+
+      .donut-card {
+        justify-items: start;
       }
 
       .field-top {
@@ -471,6 +705,27 @@
 </head>
 <body>
   <main class="app-shell">
+    <header class="topbar">
+      <div class="brand-mark">
+        <span class="brand-icon" aria-hidden="true">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none">
+            <path d="M4 17L10 11L14 15L21 8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M16 8H21V13" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        SIP Studio
+      </div>
+      <button class="theme-toggle" type="button" id="theme-toggle" aria-label="Switch to dark mode">
+        <span class="theme-icon" id="theme-icon" aria-hidden="true">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+            <path d="M12 4V2M12 22V20M4.93 4.93L3.52 3.52M20.48 20.48L19.07 19.07M4 12H2M22 12H20M4.93 19.07L3.52 20.48M20.48 3.52L19.07 4.93" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M12 17A5 5 0 1 0 12 7A5 5 0 0 0 12 17Z" stroke="currentColor" stroke-width="2"/>
+          </svg>
+        </span>
+        <span id="theme-label">Light mode</span>
+      </button>
+    </header>
+
     <section class="hero">
       <div class="summary-panel">
         <div>
@@ -482,6 +737,25 @@
         <div class="projection-total">
           <span class="metric-label">Projected maturity value</span>
           <strong class="metric-value" id="maturity-value">&#8377;11,61,695</strong>
+
+          <div class="growth-visual">
+            <div class="sparkline-card">
+              <span>Projected corpus curve</span>
+              <svg class="sparkline" viewBox="0 0 420 120" preserveAspectRatio="none" aria-hidden="true">
+                <path class="sparkline-grid" d="M0 24H420M0 60H420M0 96H420"/>
+                <path class="sparkline-area" id="sparkline-area" d=""></path>
+                <path class="sparkline-path" id="sparkline-path" d=""></path>
+              </svg>
+            </div>
+            <div class="donut-card">
+              <span>Gain share</span>
+              <svg class="donut" viewBox="0 0 120 120" aria-hidden="true">
+                <circle class="donut-bg" cx="60" cy="60" r="48"></circle>
+                <circle class="donut-fill" id="gain-donut" cx="60" cy="60" r="48" stroke-dasharray="0 302"></circle>
+              </svg>
+              <strong class="donut-value" id="gain-share-label">48%</strong>
+            </div>
+          </div>
 
           <div class="mini-stats">
             <div class="stat">
@@ -508,6 +782,11 @@
       </div>
 
       <div class="calculator-panel">
+        <div class="panel-heading">
+          <h2>Projection controls</h2>
+          <span class="market-pill">Live model</span>
+        </div>
+
         <div class="mode-switch" aria-label="SIP mode">
           <button class="mode-button active" type="button" data-mode="regular">Regular SIP</button>
           <button class="mode-button" type="button" data-mode="step-up">Step-up SIP</button>
@@ -585,6 +864,12 @@
     const resetButton = document.getElementById('reset-button');
     const errorMessage = document.getElementById('error-message');
     const allocationChart = document.getElementById('allocation-chart');
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeLabel = document.getElementById('theme-label');
+    const themeIcon = document.getElementById('theme-icon');
+    const sparklinePath = document.getElementById('sparkline-path');
+    const sparklineArea = document.getElementById('sparkline-area');
+    const gainDonut = document.getElementById('gain-donut');
 
     const controls = {
       monthlyInvestment: {
@@ -611,7 +896,8 @@
       wealthGained: document.getElementById('wealth-gained'),
       finalSip: document.getElementById('final-sip'),
       growthMultiple: document.getElementById('growth-multiple'),
-      totalMonths: document.getElementById('total-months')
+      totalMonths: document.getElementById('total-months'),
+      gainShareLabel: document.getElementById('gain-share-label')
     };
 
     const defaults = {
@@ -623,6 +909,9 @@
     };
 
     let currentMode = defaults.mode;
+    const savedTheme = localStorage.getItem('sip-theme');
+    const preferredTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    let currentTheme = savedTheme || preferredTheme;
 
     const currencyFormatter = new Intl.NumberFormat('en-IN', {
       style: 'currency',
@@ -683,6 +972,7 @@
       let maturityValue = 0;
       let totalInvested = 0;
       let finalMonthlySip = values.monthlyInvestment;
+      const yearlySeries = [];
 
       for (let month = 0; month < totalMonths; month += 1) {
         const yearIndex = Math.floor(month / 12);
@@ -691,6 +981,10 @@
         totalInvested += monthlyContribution;
         maturityValue = (maturityValue + monthlyContribution) * (1 + monthlyRate);
         finalMonthlySip = monthlyContribution;
+
+        if ((month + 1) % 12 === 0 || month === totalMonths - 1) {
+          yearlySeries.push(maturityValue);
+        }
       }
 
       return {
@@ -698,8 +992,35 @@
         maturityValue,
         wealthGained: maturityValue - totalInvested,
         finalMonthlySip,
-        totalMonths
+        totalMonths,
+        yearlySeries
       };
+    }
+
+    function buildSparkline(series) {
+      const width = 420;
+      const height = 120;
+      const padding = 10;
+      const maxValue = Math.max(...series, 1);
+
+      if (series.length === 1) {
+        const y = height - padding - ((series[0] / maxValue) * (height - padding * 2));
+        return {
+          line: `M0 ${y}L${width} ${y}`,
+          area: `M0 ${height}L0 ${y}L${width} ${y}L${width} ${height}Z`
+        };
+      }
+
+      const points = series.map((value, index) => {
+        const x = (index / (series.length - 1)) * width;
+        const y = height - padding - ((value / maxValue) * (height - padding * 2));
+        return [x, y];
+      });
+
+      const line = points.map(([x, y], index) => `${index === 0 ? 'M' : 'L'}${x.toFixed(2)} ${y.toFixed(2)}`).join('');
+      const area = `${line}L${width} ${height}L0 ${height}Z`;
+
+      return { line, area };
     }
 
     function updateOutputs(result) {
@@ -719,6 +1040,16 @@
       outputs.totalMonths.textContent = result.totalMonths;
       allocationChart.style.setProperty('--invested-share', `${investedShare}%`);
       allocationChart.style.setProperty('--gain-share', `${gainShare}%`);
+
+      const sparkline = buildSparkline(result.yearlySeries);
+      const donutCircumference = 302;
+      const rawGainShare = result.maturityValue > 0 ? (result.wealthGained / result.maturityValue) * 100 : 0;
+      const visibleGainShare = Math.max(0, Math.min(100, rawGainShare));
+
+      sparklinePath.setAttribute('d', sparkline.line);
+      sparklineArea.setAttribute('d', sparkline.area);
+      gainDonut.setAttribute('stroke-dasharray', `${(visibleGainShare / 100 * donutCircumference).toFixed(1)} ${donutCircumference}`);
+      outputs.gainShareLabel.textContent = `${Math.round(visibleGainShare)}%`;
     }
 
     function collectValues() {
@@ -764,6 +1095,27 @@
       });
     });
 
+    function updateThemeIcon(theme) {
+      const iconPath = theme === 'dark'
+        ? '<svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M21 14.5A8.5 8.5 0 0 1 9.5 3A8.8 8.8 0 1 0 21 14.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+        : '<svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 4V2M12 22V20M4.93 4.93L3.52 3.52M20.48 20.48L19.07 19.07M4 12H2M22 12H20M4.93 19.07L3.52 20.48M20.48 3.52L19.07 4.93" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M12 17A5 5 0 1 0 12 7A5 5 0 0 0 12 17Z" stroke="currentColor" stroke-width="2"/></svg>';
+
+      themeIcon.innerHTML = iconPath;
+    }
+
+    function applyTheme(theme) {
+      currentTheme = theme;
+      document.documentElement.dataset.theme = theme;
+      themeLabel.textContent = theme === 'dark' ? 'Dark mode' : 'Light mode';
+      themeToggle.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+      updateThemeIcon(theme);
+      localStorage.setItem('sip-theme', theme);
+    }
+
+    themeToggle.addEventListener('click', () => {
+      applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
+    });
+
     form.addEventListener('submit', (event) => {
       event.preventDefault();
       calculateAndRender();
@@ -786,6 +1138,7 @@
       calculateAndRender();
     });
 
+    applyTheme(currentTheme);
     calculateAndRender();
   </script>
 </body>
