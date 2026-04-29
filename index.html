@@ -1,270 +1,330 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-bs-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Tapas Ruling Atlas by Manish | Senior Advocate Research Workspace</title>
-  <meta name="description" content="Premium legal ruling atlas by Manish with filters, search, case cards, detail views, and local add/edit/delete workspace.">
-  <meta name="theme-color" content="#f6f7fb">
+
+  <title>Tapas's Ruilings Atlas | Senior Advocate Workspace</title>
+  <meta name="description" content="Tapas's Ruilings Atlas: high-speed, full-width legal research workspace with top-level filters and scan-first cards for senior advocates.">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#f4f7fb">
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon.png">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700;800&family=Newsreader:opsz,wght@6..72,600;6..72,700&display=swap" rel="stylesheet">
-  <link href="assets/css/app.css" rel="stylesheet">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+  <link href="/assets/css/ruilings.css" rel="stylesheet">
 </head>
-<body>
-  <a class="skip-link" href="#workspace">Skip to workspace</a>
+<body class="ruilings-product">
+  <a href="#main-content" class="skip-link">Skip to main content</a>
 
-  <header class="topbar">
-    <a class="brand" href="#" aria-label="Tapas Ruling Atlas by Manish home">
-      <span class="brand-mark" aria-hidden="true">R</span>
-      <span>
-        <strong>Tapas Ruling Atlas by Manish</strong>
-        <small>Senior Advocate Workspace</small>
-      </span>
-    </a>
-
-    <div class="topbar-actions">
-      <button class="icon-btn" id="themeToggle" type="button" aria-label="Switch to dark mode" title="Theme">
-        <span id="themeIcon" aria-hidden="true">D</span>
-        <span id="themeLabel">Dark</span>
-      </button>
-      <button class="icon-btn" id="exportBtn" type="button" title="Export current data">
-        <span aria-hidden="true">EX</span>
-        Export
-      </button>
-      <a class="icon-btn" href="https://tapasmitra.com/" target="_blank" rel="noopener noreferrer" title="Open main website">
-        Main Website
+  <header class="product-topbar" role="banner">
+    <div class="topbar-inner">
+      <a class="product-brand" href="/ruilings" aria-label="Tapas's Ruilings Atlas home">
+        <span class="brand-mark" aria-hidden="true">R</span>
+        <span class="brand-text-wrap">
+          <span class="brand-name">Tapas's Ruilings Atlas</span>
+          <span class="brand-sub">Senior Advocate Research Workspace</span>
+        </span>
       </a>
+
+      <div class="topbar-actions">
+        <a class="topbar-link" href="/">
+          <i class="bi bi-arrow-left-short" aria-hidden="true"></i>
+          Main Website
+        </a>
+      </div>
     </div>
   </header>
 
-  <main>
-    <section class="hero">
-      <div class="hero-copy">
-        <p class="kicker">Case Law Intelligence</p>
-        <h1>Premium ruilings command center for fast legal scanning.</h1>
-        <p class="hero-subtitle">Search, filter, edit, and organize courtroom-ready authorities with high-contrast cards and decisive case summaries.</p>
-      </div>
+  <main id="main-content">
+    <section class="product-hero" aria-labelledby="ruilings-heading">
+      <div class="workspace-shell">
+        <p class="hero-kicker">Case Law Intelligence</p>
+        <h1 id="ruilings-heading" class="hero-title">Tapas's Ruilings Workspace</h1>
+        <p class="hero-subtitle">
+          Top-row filters, high-contrast cards, and decisive summaries designed for high-volume legal scanning.
+        </p>
 
-      <div class="stats-grid" aria-live="polite">
-        <article class="stat-card">
-          <span>Total Entries</span>
-          <strong id="statEntries">--</strong>
-        </article>
-        <article class="stat-card">
-          <span>Categories</span>
-          <strong id="statCategories">--</strong>
-        </article>
-        <article class="stat-card">
-          <span>Sub-categories</span>
-          <strong id="statSubCategories">--</strong>
-        </article>
-        <article class="stat-card">
-          <span>Courts Covered</span>
-          <strong id="statCourts">--</strong>
-        </article>
+        <div class="hero-stats" id="heroStats" aria-live="polite">
+          <article class="hero-stat-card">
+            <p class="hero-stat-label">Total Entries</p>
+            <p class="hero-stat-value" id="statTotalEntries">--</p>
+          </article>
+          <article class="hero-stat-card">
+            <p class="hero-stat-label">Categories</p>
+            <p class="hero-stat-value" id="statTotalCategories">--</p>
+          </article>
+          <article class="hero-stat-card">
+            <p class="hero-stat-label">Sub-categories</p>
+            <p class="hero-stat-value" id="statTotalSubCategories">--</p>
+          </article>
+          <article class="hero-stat-card">
+            <p class="hero-stat-label">Courts Covered</p>
+            <p class="hero-stat-value" id="statCourtsCovered">--</p>
+          </article>
+        </div>
       </div>
     </section>
 
-    <section class="workspace" id="workspace">
-      <aside class="filters-panel" aria-label="Filter ruilings">
-        <div class="panel-heading">
-          <div>
-            <p class="panel-kicker">Research Controls</p>
-            <h2>Refine Atlas</h2>
-          </div>
-          <button class="soft-btn" id="resetFiltersBtn" type="button">Reset</button>
-        </div>
+    <section id="ruilings-catalogue" class="product-workspace" aria-labelledby="workspace-heading">
+      <div class="workspace-shell">
+        <h2 id="workspace-heading" class="sr-only">Ruilings Workspace</h2>
 
-        <label class="control control-search" for="searchInput">
-          <span>Keyword Search</span>
-          <input id="searchInput" type="search" placeholder="e.g. dying declaration, sec 125, res judicata">
-        </label>
-
-        <label class="control" for="categoryFilter">
-          <span>Category</span>
-          <select id="categoryFilter"></select>
-        </label>
-
-        <label class="control" for="subCategoryFilter">
-          <span>Sub-category</span>
-          <select id="subCategoryFilter"></select>
-        </label>
-
-        <label class="control" for="stageFilter">
-          <span>Stage</span>
-          <select id="stageFilter"></select>
-        </label>
-
-        <label class="control" for="courtFilter">
-          <span>Court</span>
-          <select id="courtFilter"></select>
-        </label>
-
-        <label class="control" for="sortFilter">
-          <span>Sort</span>
-          <select id="sortFilter">
-            <option value="serial-asc">Serial: Low to High</option>
-            <option value="serial-desc">Serial: High to Low</option>
-            <option value="year-desc">Year: Newest First</option>
-            <option value="year-asc">Year: Oldest First</option>
-          </select>
-        </label>
-
-        <button class="primary-btn" id="openAddBtn" type="button">Add Ruiling</button>
-      </aside>
-
-      <section class="results-panel" aria-label="Ruiling results">
-        <div class="results-header">
-          <div>
-            <p class="panel-kicker">Catalogue</p>
-            <h2 id="resultCount">Loading ruilings...</h2>
-          </div>
-          <div class="results-tools">
-            <div class="status-pill ready" id="workspaceStatus" role="status" aria-live="polite">
-              <span class="status-dot" aria-hidden="true"></span>
-              <span id="workspaceStatusText">Local workspace ready</span>
+        <div class="filters-toolbar panel-card" aria-label="Filter rulings">
+          <div class="filters-grid">
+            <div class="filter-group filter-group-search">
+              <label for="searchInput">Keyword Search</label>
+              <input type="search" id="searchInput" class="form-control form-control-custom" placeholder="AI + keyword search: e.g. dying declaration admissibility, sec 125 maintenance, res judicata">
             </div>
-            <div class="active-filters" id="activeFilters"></div>
+
+            <div class="filter-group">
+              <label for="categoryFilter">Category</label>
+              <select id="categoryFilter" class="form-select form-control-custom">
+                <option value="all">All categories</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label for="subCategoryFilter">Sub-category</label>
+              <select id="subCategoryFilter" class="form-select form-control-custom">
+                <option value="all">All sub-categories</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label for="stageFilter">Stage</label>
+              <select id="stageFilter" class="form-select form-control-custom">
+                <option value="all">All stages</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label for="courtFilter">Court</label>
+              <select id="courtFilter" class="form-select form-control-custom">
+                <option value="all">All courts</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label for="sortFilter">Sort</label>
+              <select id="sortFilter" class="form-select form-control-custom">
+                <option value="serial-asc">Serial: Low to High</option>
+                <option value="serial-desc">Serial: High to Low</option>
+                <option value="year-desc">Year: Newest First</option>
+                <option value="year-asc">Year: Oldest First</option>
+              </select>
+            </div>
+
+            <div class="filter-group filter-group-action">
+              <label class="filter-label-spacer" aria-hidden="true">Reset</label>
+              <button type="button" id="resetFilters" class="btn reset-btn">
+                <i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i>
+                Reset
+              </button>
+            </div>
+
+            <div class="filter-group filter-group-action">
+              <label class="filter-label-spacer" aria-hidden="true">Add</label>
+              <button type="button" id="openAddRuilingBtn" class="btn reset-btn add-btn" data-bs-toggle="modal" data-bs-target="#addRuilingModal">
+                <i class="bi bi-plus-circle" aria-hidden="true"></i>
+                Add Ruiling
+              </button>
+            </div>
           </div>
         </div>
 
-        <div class="cards-grid" id="cardsGrid" aria-live="polite"></div>
-        <nav class="pagination" id="pagination" aria-label="Ruilings pagination"></nav>
-      </section>
+        <section class="results-panel" aria-label="Ruilings results">
+          <div class="results-topbar">
+            <div class="results-status-row">
+              <div id="resultCount" class="ruiling-result-count" aria-live="polite">Loading ruilings...</div>
+              <div id="serverWarmStatus" class="server-warm-status checking" aria-live="polite" role="status">
+                <span class="server-warm-dot" aria-hidden="true"></span>
+                <span id="serverWarmStatusText">Connecting secure server...</span>
+              </div>
+            </div>
+            <div id="activeFilters" class="active-filters" aria-live="polite"></div>
+          </div>
+
+          <div id="cardsGrid" class="cards-grid" aria-live="polite"></div>
+          <nav id="paginationWrap" class="ruiling-pagination-wrap" aria-label="Ruilings pagination"></nav>
+        </section>
+      </div>
     </section>
   </main>
 
-  <dialog class="modal" id="detailModal">
-    <div class="modal-shell detail-shell">
-      <div class="modal-header">
-        <div>
-          <p class="panel-kicker">Ruiling Detail View</p>
-          <h2 id="detailTitle">Case Details</h2>
-          <p id="detailMeta" class="muted"></p>
-        </div>
-        <button class="close-btn" type="button" data-close-modal="detailModal" aria-label="Close">x</button>
-      </div>
-
-      <div class="modal-body detail-grid">
-        <section class="detail-block">
-          <h3>Issue Before Court</h3>
-          <p id="detailIssue"></p>
-        </section>
-        <section class="detail-block detail-emphasis">
-          <h3>Holding / Ratio</h3>
-          <p id="detailHolding"></p>
-        </section>
-        <section class="detail-block">
-          <h3>Statutory Anchors</h3>
-          <div class="tag-list" id="detailTags"></div>
-        </section>
-        <section class="detail-block">
-          <h3>Practice Notes / Courtroom Use Playbook</h3>
-          <ul id="detailNotes"></ul>
-        </section>
-        <section class="detail-block">
-          <h3>Counterpoints / Distinctions</h3>
-          <ul id="detailRelatedDetails"></ul>
-        </section>
-        <section class="detail-block">
-          <h3>Web References</h3>
-          <div id="detailSources" class="sources-list"></div>
-        </section>
-        <section class="detail-block">
-          <h3>Data Provenance</h3>
-          <p id="detailProvenance"></p>
-        </section>
-        <section class="detail-block detail-related">
-          <div class="related-head">
-            <h3>Companion Authorities</h3>
-            <p id="relatedHint" class="muted"></p>
+  <div class="modal fade" id="viewRuilingModal" tabindex="-1" aria-labelledby="viewRuilingModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable view-ruiling-dialog">
+      <div class="modal-content view-ruiling-content">
+        <div class="modal-header view-modal-header">
+          <div class="view-modal-headings">
+            <p class="view-modal-kicker">Ruiling Detail View</p>
+            <h2 class="modal-title view-modal-title" id="viewRuilingModalLabel">Case Details</h2>
+            <p id="viewRuilingMeta" class="view-modal-meta"></p>
           </div>
-          <div id="relatedList" class="related-list"></div>
-        </section>
-      </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
 
-      <div class="modal-footer">
-        <button class="soft-btn" id="copyDetailBtn" type="button">Copy Citation</button>
-        <button class="soft-btn" id="editDetailBtn" type="button">Edit Ruiling</button>
-        <button class="danger-btn" id="deleteDetailBtn" type="button">Delete Ruiling</button>
-        <button class="primary-btn" type="button" data-close-modal="detailModal">Back to Atlas</button>
+        <div class="modal-body view-modal-body">
+          <section class="view-block" aria-labelledby="viewVerdictHeading">
+            <h3 id="viewVerdictHeading" class="view-block-title">
+              <i class="bi bi-question-circle" aria-hidden="true"></i>
+              Issue Before Court
+            </h3>
+            <p id="viewRuilingVerdict" class="view-block-text"></p>
+          </section>
+
+          <section class="view-block" aria-labelledby="viewImpactHeading">
+            <h3 id="viewImpactHeading" class="view-block-title">
+              <i class="bi bi-bank2" aria-hidden="true"></i>
+              Holding / Ratio
+            </h3>
+            <p id="viewRuilingImpact" class="view-block-text view-block-text-impact"></p>
+          </section>
+
+          <section class="view-block" aria-labelledby="viewTagsHeading">
+            <h3 id="viewTagsHeading" class="view-block-title">
+              <i class="bi bi-collection" aria-hidden="true"></i>
+              Statutory Anchors
+            </h3>
+            <div id="viewRuilingTags" class="view-tags"></div>
+          </section>
+
+          <section class="view-block" aria-labelledby="viewNotesHeading">
+            <h3 id="viewNotesHeading" class="view-block-title">
+              <i class="bi bi-list-check" aria-hidden="true"></i>
+              Courtroom Use Playbook
+            </h3>
+            <ul id="viewRuilingNotes" class="view-notes"></ul>
+          </section>
+
+          <section class="view-block" aria-labelledby="viewRelatedDetailsHeading">
+            <h3 id="viewRelatedDetailsHeading" class="view-block-title">
+              <i class="bi bi-diagram-3" aria-hidden="true"></i>
+              Counterpoints / Distinctions
+            </h3>
+            <ul id="viewRuilingRelatedDetails" class="view-notes"></ul>
+          </section>
+
+          <section class="view-block" aria-labelledby="viewSourcesHeading">
+            <h3 id="viewSourcesHeading" class="view-block-title">
+              <i class="bi bi-link-45deg" aria-hidden="true"></i>
+              Web References
+            </h3>
+            <div id="viewRuilingSources" class="view-sources"></div>
+          </section>
+
+          <section class="view-related-wrap" aria-labelledby="viewRelatedHeading">
+            <div class="view-related-head">
+              <h3 id="viewRelatedHeading" class="view-related-title">Companion Authorities</h3>
+              <p id="viewRuilingRelatedHint" class="view-related-hint"></p>
+            </div>
+            <div id="viewRuilingRelatedList" class="view-related-list"></div>
+          </section>
+        </div>
+
+        <div class="modal-footer view-modal-footer">
+          <button type="button" id="editViewRuiling" class="btn mini-action-btn view-btn">Edit Ruiling</button>
+          <button type="button" id="deleteViewRuiling" class="btn mini-action-btn delete-btn">Delete Ruiling</button>
+          <button type="button" id="copyViewCitation" class="btn mini-action-btn">Copy Citation</button>
+          <button type="button" class="btn reset-btn view-close-btn" data-bs-dismiss="modal">Back to Atlas</button>
+        </div>
       </div>
     </div>
-  </dialog>
+  </div>
 
-  <dialog class="modal" id="editorModal">
-    <form class="modal-shell editor-shell" id="rulingForm" method="dialog">
-      <div class="modal-header">
-        <div>
-          <p class="panel-kicker" id="editorMode">Add Mode</p>
-          <h2 id="editorTitle">Add Ruiling</h2>
-          <p class="muted">Enter the required fields. Optional fields improve filtering, detail views, and companion authority matching.</p>
+  <div class="modal fade" id="addRuilingModal" tabindex="-1" aria-labelledby="addRuilingModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+      <div class="modal-content add-modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title fs-5" id="addRuilingModalLabel">Add Ruiling</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <button class="close-btn" type="button" data-close-modal="editorModal" aria-label="Close">x</button>
+        <div class="modal-body">
+          <p class="add-mode-badge" id="addModeBadge">Add Mode</p>
+          <p class="add-modal-help" id="addModalHelpText">
+            Enter 3 required fields and click <strong>Add Ruiling</strong>. Atlas will process the rest automatically.
+          </p>
+
+          <div class="filter-group mb-3">
+            <label for="newCaseReference">Case Reference / Case Number</label>
+            <textarea id="newCaseReference" class="form-control form-control-custom" rows="3" placeholder="Example: AIR 2024 SC ... - Case Name v. Case Name"></textarea>
+          </div>
+
+          <div class="filter-group mb-3">
+            <label for="newVerdict">Verdict</label>
+            <textarea id="newVerdict" class="form-control form-control-custom" rows="3" placeholder="Short principle / section focus"></textarea>
+          </div>
+
+          <div class="filter-group mb-3">
+            <label for="newImpact">Impact</label>
+            <textarea id="newImpact" class="form-control form-control-custom" rows="5" placeholder="Detailed ratio / practical takeaway"></textarea>
+          </div>
+
+          <details class="add-advanced-wrap mb-3" open>
+            <summary>Optional Advanced Details (Override if needed)</summary>
+            <div class="add-advanced-grid mt-3">
+              <div class="filter-group">
+                <label for="optionalCategory">Category (optional)</label>
+                <input id="optionalCategory" class="form-control form-control-custom" type="text" placeholder="e.g. Evidence Law & Trial Proof">
+              </div>
+              <div class="filter-group">
+                <label for="optionalSubCategory">Sub-category (optional)</label>
+                <input id="optionalSubCategory" class="form-control form-control-custom" type="text" placeholder="e.g. Admissibility & Objection Handling">
+              </div>
+              <div class="filter-group">
+                <label for="optionalStage">Stage (optional)</label>
+                <input id="optionalStage" class="form-control form-control-custom" type="text" placeholder="e.g. Trial / Evidence">
+              </div>
+              <div class="filter-group">
+                <label for="optionalCourt">Court (optional)</label>
+                <input id="optionalCourt" class="form-control form-control-custom" type="text" placeholder="e.g. Supreme Court">
+              </div>
+              <div class="filter-group">
+                <label for="optionalYear">Year (optional)</label>
+                <input id="optionalYear" class="form-control form-control-custom" type="number" min="1900" max="2100" placeholder="e.g. 2001">
+              </div>
+              <div class="filter-group">
+                <label for="optionalStatuteTags">Statute Tags (optional)</label>
+                <textarea id="optionalStatuteTags" class="form-control form-control-custom" rows="2" placeholder="Comma separated tags"></textarea>
+              </div>
+              <div class="filter-group">
+                <label for="optionalAdvocateNotes">Advocate Notes (optional)</label>
+                <textarea id="optionalAdvocateNotes" class="form-control form-control-custom" rows="3" placeholder="One note per line"></textarea>
+              </div>
+              <div class="filter-group">
+                <label for="optionalRelatedDetails">Related Details (optional)</label>
+                <textarea id="optionalRelatedDetails" class="form-control form-control-custom" rows="3" placeholder="One topic per line"></textarea>
+              </div>
+            </div>
+          </details>
+
+          <div class="d-flex flex-wrap gap-2 mb-3">
+            <button type="button" id="submitAddRuiling" class="btn reset-btn">
+              <i class="bi bi-plus-circle" aria-hidden="true"></i>
+              Add Ruiling
+            </button>
+          </div>
+        </div>
       </div>
+    </div>
+  </div>
 
-      <div class="modal-body editor-grid">
-        <label class="control wide" for="caseReferenceInput">
-          <span>Case Reference / Case Number *</span>
-          <textarea id="caseReferenceInput" rows="3" required></textarea>
-        </label>
-        <label class="control wide" for="issueInput">
-          <span>Verdict / Issue *</span>
-          <textarea id="issueInput" rows="3" required></textarea>
-        </label>
-        <label class="control wide" for="holdingInput">
-          <span>Impact / Holding *</span>
-          <textarea id="holdingInput" rows="5" required></textarea>
-        </label>
-        <label class="control" for="categoryInput">
-          <span>Category</span>
-          <input id="categoryInput" type="text">
-        </label>
-        <label class="control" for="subCategoryInput">
-          <span>Sub-category</span>
-          <input id="subCategoryInput" type="text">
-        </label>
-        <label class="control" for="stageInput">
-          <span>Stage</span>
-          <input id="stageInput" type="text">
-        </label>
-        <label class="control" for="courtInput">
-          <span>Court</span>
-          <input id="courtInput" type="text">
-        </label>
-        <label class="control" for="yearInput">
-          <span>Year</span>
-          <input id="yearInput" type="number" min="1800" max="2100">
-        </label>
-        <label class="control wide" for="tagsInput">
-          <span>Statute Tags</span>
-          <textarea id="tagsInput" rows="2" placeholder="Comma separated"></textarea>
-        </label>
-        <label class="control wide" for="notesInput">
-          <span>Advocate Notes</span>
-          <textarea id="notesInput" rows="3" placeholder="One note per line"></textarea>
-        </label>
-        <label class="control wide" for="relatedDetailsInput">
-          <span>Related Details</span>
-          <textarea id="relatedDetailsInput" rows="3" placeholder="One point per line"></textarea>
-        </label>
-        <label class="control wide" for="sourcesInput">
-          <span>Web References</span>
-          <textarea id="sourcesInput" rows="3" placeholder="One URL per line"></textarea>
-        </label>
-      </div>
+  <div class="toast-container position-fixed top-0 end-0 p-3" id="atlasToastContainer"></div>
 
-      <div class="modal-footer">
-        <button class="soft-btn" type="button" data-close-modal="editorModal">Cancel</button>
-        <button class="primary-btn" id="saveRulingBtn" type="submit">Save Ruiling</button>
-      </div>
-    </form>
-  </dialog>
-
-  <div class="toast-wrap" id="toastWrap" aria-live="polite"></div>
-
-  <script src="assets/js/app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    window.ATLAS_API_BASE = '';
+  </script>
+  <script src="/assets/js/ruilings.js"></script>
 </body>
 </html>
