@@ -12,6 +12,7 @@
   const CLIENT_KEEPALIVE_INTERVAL_MS = 240000;
   const LOCAL_DRAFT_STORAGE_KEY = 'atlasRuilingsDraftEntriesV1';
   const LOCAL_DELETED_STORAGE_KEY = 'atlasRuilingsDeletedEntriesV1';
+  const THEME_STORAGE_KEY = 'atlasRuilingsThemeV1';
   const DEFAULT_NOTES = [
     'Align this citation with factual matrix and stage before relying in court.',
     'Pair this with current binding precedent from the same jurisdiction.',
@@ -83,6 +84,7 @@
     viewRuilingNotes: document.getElementById('viewRuilingNotes'),
     viewRuilingRelatedDetails: document.getElementById('viewRuilingRelatedDetails'),
     viewRuilingSources: document.getElementById('viewRuilingSources'),
+    viewRuilingProvenance: document.getElementById('viewRuilingProvenance'),
     viewRuilingRelatedHint: document.getElementById('viewRuilingRelatedHint'),
     viewRuilingRelatedList: document.getElementById('viewRuilingRelatedList'),
     copyViewCitation: document.getElementById('copyViewCitation'),
@@ -94,6 +96,8 @@
     addModalHelpText: document.getElementById('addModalHelpText'),
     serverWarmStatus: document.getElementById('serverWarmStatus'),
     serverWarmStatusText: document.getElementById('serverWarmStatusText'),
+    themeToggle: document.getElementById('themeToggle'),
+    themeToggleLabel: document.getElementById('themeToggleLabel'),
   };
 
   let viewModalInstance = null;
@@ -109,6 +113,7 @@
     return;
   }
 
+  initTheme();
   loadData();
   bindEvents();
   initApiWarmup();
@@ -119,6 +124,53 @@
       return normalizedPath;
     }
     return API_BASE ? `${API_BASE}${normalizedPath}` : normalizedPath;
+  }
+
+  function initTheme() {
+    const savedTheme = readSavedTheme();
+    const systemPrefersDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches;
+    applyTheme(savedTheme || (systemPrefersDark ? 'dark' : 'light'), false);
+  }
+
+  function readSavedTheme() {
+    try {
+      const saved = window.localStorage?.getItem(THEME_STORAGE_KEY);
+      return saved === 'dark' || saved === 'light' ? saved : '';
+    } catch (error) {
+      console.warn('Could not read saved theme.', error);
+      return '';
+    }
+  }
+
+  function applyTheme(theme, persist) {
+    const nextTheme = theme === 'dark' ? 'dark' : 'light';
+    document.documentElement.dataset.theme = nextTheme;
+    document.documentElement.setAttribute('data-bs-theme', nextTheme);
+
+    const metaTheme = document.querySelector('meta[name="theme-color"]');
+    if (metaTheme) {
+      metaTheme.setAttribute('content', nextTheme === 'dark' ? '#07111f' : '#f4f7fb');
+    }
+
+    if (els.themeToggle) {
+      els.themeToggle.setAttribute('aria-pressed', String(nextTheme === 'dark'));
+      els.themeToggle.setAttribute(
+        'aria-label',
+        nextTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'
+      );
+    }
+
+    if (els.themeToggleLabel) {
+      els.themeToggleLabel.textContent = nextTheme === 'dark' ? 'Dark' : 'Light';
+    }
+
+    if (persist) {
+      try {
+        window.localStorage?.setItem(THEME_STORAGE_KEY, nextTheme);
+      } catch (error) {
+        console.warn('Could not save theme.', error);
+      }
+    }
   }
 
   async function loadData() {
@@ -264,10 +316,26 @@
         }
 
         const originalText = copyButton.textContent;
+        const originalHtml = copyButton.innerHTML;
+        const originalLabel = copyButton.getAttribute('aria-label') || '';
         const copied = await copyToClipboard(citation);
-        copyButton.textContent = copied ? 'Copied' : 'Copy failed';
+        if (copyButton.classList.contains('icon-action-btn')) {
+          copyButton.innerHTML = copied
+            ? '<i class="bi bi-check2" aria-hidden="true"></i>'
+            : '<i class="bi bi-exclamation-triangle" aria-hidden="true"></i>';
+          copyButton.setAttribute('aria-label', copied ? 'Citation copied' : 'Copy failed');
+        } else {
+          copyButton.textContent = copied ? 'Copied' : 'Copy failed';
+        }
         setTimeout(() => {
-          copyButton.textContent = originalText || 'Copy Citation';
+          if (copyButton.classList.contains('icon-action-btn')) {
+            copyButton.innerHTML = originalHtml;
+            if (originalLabel) {
+              copyButton.setAttribute('aria-label', originalLabel);
+            }
+          } else {
+            copyButton.textContent = originalText || 'Copy Citation';
+          }
         }, 1000);
         return;
       }
@@ -381,6 +449,13 @@
       els.deleteViewRuiling.addEventListener('click', async () => {
         const entryId = Number(currentViewEntry?.id || currentViewEntry?.serial || 0);
         await confirmAndDeleteRuiling(entryId);
+      });
+    }
+
+    if (els.themeToggle) {
+      els.themeToggle.addEventListener('click', () => {
+        const currentTheme = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+        applyTheme(currentTheme === 'dark' ? 'light' : 'dark', true);
       });
     }
 
@@ -1066,23 +1141,21 @@
         const serialDisplay = String(entry.serial).padStart(3, '0');
         const tags = dedupeTags(entry.statuteTags || []);
         const taxonomy = `${entry.category || 'General'} \u203a ${entry.subCategory || 'General'}`;
+        const issuePreview = buildPreviewText(entry.issue || 'Issue text is not available.', 145);
+        const holdingPreview = buildPreviewText(entry.holding || 'Holding text is not available.', 170);
         const practiceNotes = safeTextList(entry.advocateNotes || [], 99);
         const relatedDetails = safeTextList(entry.relatedDetails || [], 99);
         const sources = safeUrlList(entry.researchSources || [], 99);
-        const provenance = [
-          entry.localDraft ? 'Local Draft (browser only)' : 'Bundled atlas dataset',
-          entry.webEnhancedOn ? `Web enhanced on ${entry.webEnhancedOn}` : '',
-          entry.enhancedByModel ? `Enhanced by ${entry.enhancedByModel}` : '',
-        ].filter(Boolean).join(' | ');
         const localBadge = entry.localDraft
           ? '<span class="ruiling-source-badge">Local Draft</span>'
           : '';
-
-        const sectionAnchors = tags.length
-          ? tags
+        const visibleTags = tags.slice(0, 3);
+        const hiddenTagCount = Math.max(0, tags.length - visibleTags.length);
+        const sectionAnchors = visibleTags.length
+          ? visibleTags
             .map((tag) => `<span class="ruiling-inline-tag">${escapeHtml(tag)}</span>`)
             .join('')
-          : '<span class="ruiling-inline-tag is-muted">No statutory anchor captured</span>';
+          : '<span class="ruiling-inline-tag is-muted">No anchors</span>';
 
         return `
           <article
@@ -1097,8 +1170,10 @@
               <span class="ruiling-stage">${escapeHtml(entry.stage || 'General')}</span>
             </div>
 
-            <p class="ruiling-reference">${escapeHtml(entry.caseReference || '')}</p>
-            ${localBadge}
+            <div class="ruiling-card-headline">
+              <p class="ruiling-reference">${escapeHtml(entry.caseReference || '')}</p>
+              ${localBadge}
+            </div>
 
             <div class="ruiling-meta">
               <span class="ruiling-meta-item"><i class="bi bi-building me-1" aria-hidden="true"></i>${escapeHtml(entry.court || 'Reported Court')}</span>
@@ -1106,48 +1181,35 @@
               <span class="ruiling-meta-item"><i class="bi bi-calendar3 me-1" aria-hidden="true"></i>${entry.year ? escapeHtml(String(entry.year)) : 'Year not captured'}</span>
             </div>
 
-            <section class="ruiling-full-block">
-              <h3 class="ruiling-summary-title">Issue Before Court</h3>
-              <p class="ruiling-summary-text">${escapeHtml(entry.issue || 'Issue text is not available.')}</p>
-            </section>
-
-            <section class="ruiling-full-block ruiling-full-block-impact">
-              <h3 class="ruiling-summary-title">Holding / Ratio</h3>
-              <p class="ruiling-summary-text">${escapeHtml(entry.holding || 'Holding text is not available.')}</p>
-            </section>
-
             <p class="ruiling-taxonomy">${escapeHtml(taxonomy)}</p>
-            <p class="ruiling-detail-line"><span class="ruiling-detail-label">Serial / ID:</span> #${serialDisplay} / ${escapeHtml(String(entry.id || entry.serial || ''))}</p>
-            <p class="ruiling-detail-line"><span class="ruiling-detail-label">Category:</span> ${escapeHtml(entry.category || 'General')}</p>
-            <p class="ruiling-detail-line"><span class="ruiling-detail-label">Sub-category:</span> ${escapeHtml(entry.subCategory || 'General')}</p>
-            <p class="ruiling-detail-line"><span class="ruiling-detail-label">Stage:</span> ${escapeHtml(entry.stage || 'General')}</p>
-            <p class="ruiling-detail-line"><span class="ruiling-detail-label">Court:</span> ${escapeHtml(entry.court || 'Reported Court')}</p>
-            <p class="ruiling-detail-line"><span class="ruiling-detail-label">Year:</span> ${entry.year ? escapeHtml(String(entry.year)) : 'Year not captured'}</p>
+
+            <div class="ruiling-preview-stack">
+              <section class="ruiling-preview-block">
+                <h3 class="ruiling-summary-title">Issue</h3>
+                <p class="ruiling-summary-text">${escapeHtml(issuePreview)}</p>
+              </section>
+              <section class="ruiling-preview-block ruiling-preview-block-strong">
+                <h3 class="ruiling-summary-title">Holding</h3>
+                <p class="ruiling-summary-text">${escapeHtml(holdingPreview)}</p>
+              </section>
+            </div>
+
             <div class="ruiling-inline-tags" aria-label="Statutory anchors">
               ${sectionAnchors}
+              ${hiddenTagCount ? `<span class="ruiling-inline-tag is-muted">+${hiddenTagCount} more</span>` : ''}
             </div>
-            <section class="ruiling-full-block">
-              <h3 class="ruiling-summary-title">Practice Notes / Courtroom Use Playbook</h3>
-              ${practiceNotes.length ? `<ul class="ruiling-full-list">${practiceNotes.map((note) => `<li>${escapeHtml(note)}</li>`).join('')}</ul>` : '<p class="ruiling-summary-text">No practice notes added yet.</p>'}
-            </section>
-            <section class="ruiling-full-block">
-              <h3 class="ruiling-summary-title">Counterpoints / Distinctions / Related Details</h3>
-              ${relatedDetails.length ? `<ul class="ruiling-full-list">${relatedDetails.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>` : '<p class="ruiling-summary-text">No related details added yet.</p>'}
-            </section>
-            <section class="ruiling-full-block">
-              <h3 class="ruiling-summary-title">Web References</h3>
-              ${sources.length ? `<div class="ruiling-full-sources">${sources.map((url, index) => `<a href="${escapeAttribute(url)}" target="_blank" rel="noopener noreferrer">Source ${index + 1}: ${escapeHtml(shortUrl(url))}</a>`).join('')}</div>` : '<p class="ruiling-summary-text">No web references captured for this entry.</p>'}
-            </section>
-            <section class="ruiling-full-block">
-              <h3 class="ruiling-summary-title">Data Provenance</h3>
-              <p class="ruiling-summary-text">${escapeHtml(provenance || 'No provenance captured.')}</p>
-            </section>
+
+            <div class="ruiling-card-metrics" aria-label="Available detail counts">
+              <span><i class="bi bi-journal-text" aria-hidden="true"></i>${practiceNotes.length} notes</span>
+              <span><i class="bi bi-diagram-3" aria-hidden="true"></i>${relatedDetails.length} related</span>
+              <span><i class="bi bi-link-45deg" aria-hidden="true"></i>${sources.length} sources</span>
+            </div>
 
             <div class="ruiling-card-footer">
-              <button type="button" class="mini-action-btn view-btn" data-view-id="${Number(entry.id || entry.serial)}">View Details</button>
-              <button type="button" class="mini-action-btn view-btn" data-edit-id="${Number(entry.id || entry.serial)}">Edit</button>
-              <button type="button" class="mini-action-btn delete-btn" data-delete-id="${Number(entry.id || entry.serial)}">Delete</button>
-              <button type="button" class="mini-action-btn" data-copy-ref="${escapeAttribute(entry.caseReference || '')}">Copy Citation</button>
+              <button type="button" class="mini-action-btn view-btn" data-view-id="${Number(entry.id || entry.serial)}"><i class="bi bi-layout-text-window-reverse" aria-hidden="true"></i>Details</button>
+              <button type="button" class="mini-action-btn icon-action-btn" data-edit-id="${Number(entry.id || entry.serial)}" aria-label="Edit ruiling #${serialDisplay}" title="Edit"><i class="bi bi-pencil-square" aria-hidden="true"></i></button>
+              <button type="button" class="mini-action-btn icon-action-btn delete-btn" data-delete-id="${Number(entry.id || entry.serial)}" aria-label="Delete ruiling #${serialDisplay}" title="Delete"><i class="bi bi-trash3" aria-hidden="true"></i></button>
+              <button type="button" class="mini-action-btn icon-action-btn" data-copy-ref="${escapeAttribute(entry.caseReference || '')}" aria-label="Copy citation for ruiling #${serialDisplay}" title="Copy citation"><i class="bi bi-copy" aria-hidden="true"></i></button>
             </div>
           </article>
         `;
@@ -1738,6 +1800,7 @@
     renderViewNotes(entry.advocateNotes || []);
     renderViewRelatedDetails(entry.relatedDetails || []);
     renderViewSources(entry.researchSources || []);
+    renderViewProvenance(entry);
     renderRelatedRuilings(entry);
   }
 
@@ -1746,7 +1809,7 @@
       return;
     }
 
-    const normalized = dedupeTags(tags).slice(0, 12);
+    const normalized = dedupeTags(tags);
     if (!normalized.length) {
       els.viewRuilingTags.innerHTML = '<span class="ruiling-tag">No section tags available in source</span>';
       return;
@@ -1762,7 +1825,7 @@
       return;
     }
 
-    const normalized = safeTextList(notes, 4);
+    const normalized = safeTextList(notes, 99);
     if (!normalized.length) {
       els.viewRuilingNotes.innerHTML = '<li>No playbook note added yet. Start with factual parity, jurisdiction, and current binding status.</li>';
       return;
@@ -1778,7 +1841,7 @@
       return;
     }
 
-    const normalized = safeTextList(details, 6);
+    const normalized = safeTextList(details, 99);
     if (!normalized.length) {
       els.viewRuilingRelatedDetails.innerHTML = '<li>No additional related details added yet for this entry.</li>';
       return;
@@ -1794,7 +1857,7 @@
       return;
     }
 
-    const normalized = safeUrlList(sources, 8);
+    const normalized = safeUrlList(sources, 99);
     if (!normalized.length) {
       els.viewRuilingSources.innerHTML = '<p class="m-0 text-muted">No web references captured for this entry yet.</p>';
       return;
@@ -1805,6 +1868,20 @@
         `<a class="view-source-link" href="${escapeAttribute(url)}" target="_blank" rel="noopener noreferrer">Source ${index + 1}: ${escapeHtml(shortUrl(url))}</a>`
       ))
       .join('');
+  }
+
+  function renderViewProvenance(entry) {
+    if (!els.viewRuilingProvenance) {
+      return;
+    }
+
+    const provenance = [
+      entry.localDraft ? 'Local Draft (browser only)' : 'Bundled atlas dataset',
+      entry.webEnhancedOn ? `Web enhanced on ${entry.webEnhancedOn}` : '',
+      entry.enhancedByModel ? `Enhanced by ${entry.enhancedByModel}` : '',
+    ].filter(Boolean).join(' | ');
+
+    els.viewRuilingProvenance.textContent = provenance || 'No provenance captured.';
   }
 
   function renderRelatedRuilings(entry) {

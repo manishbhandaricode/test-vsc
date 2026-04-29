@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-  <title>Tapas's Ruilings Atlas | Senior Advocate Workspace</title>
-  <meta name="description" content="Tapas's Ruilings Atlas: high-speed, full-width legal research workspace with top-level filters and scan-first cards for senior advocates.">
+  <title>Tapas Ruling Atlas by Manish | Senior Advocate Workspace</title>
+  <meta name="description" content="Tapas Ruling Atlas by Manish: high-speed, full-width legal research workspace with top-level filters and scan-first cards for senior advocates.">
   <meta name="robots" content="index, follow">
   <meta name="theme-color" content="#f4f7fb">
 
@@ -29,15 +29,23 @@
 
   <header class="product-topbar" role="banner">
     <div class="topbar-inner">
-      <a class="product-brand" href="/ruilings" aria-label="Tapas's Ruilings Atlas home">
-        <span class="brand-mark" aria-hidden="true">R</span>
+      <a class="product-brand" href="/ruilings" aria-label="Tapas Ruling Atlas by Manish home">
+        <span class="brand-mark" aria-hidden="true">M</span>
         <span class="brand-text-wrap">
-          <span class="brand-name">Tapas's Ruilings Atlas</span>
+          <span class="brand-name">Tapas Ruling Atlas by Manish</span>
           <span class="brand-sub">Senior Advocate Research Workspace</span>
         </span>
       </a>
 
       <div class="topbar-actions">
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark mode" aria-pressed="false">
+          <span class="theme-toggle-track" aria-hidden="true">
+            <i class="bi bi-sun-fill theme-toggle-icon theme-toggle-icon-light"></i>
+            <i class="bi bi-moon-stars-fill theme-toggle-icon theme-toggle-icon-dark"></i>
+            <span class="theme-toggle-thumb"></span>
+          </span>
+          <span class="theme-toggle-label" id="themeToggleLabel">Light</span>
+        </button>
         <a class="topbar-link" href="/">
           <i class="bi bi-arrow-left-short" aria-hidden="true"></i>
           Main Website
@@ -50,7 +58,7 @@
     <section class="product-hero" aria-labelledby="ruilings-heading">
       <div class="workspace-shell">
         <p class="hero-kicker">Case Law Intelligence</p>
-        <h1 id="ruilings-heading" class="hero-title">Tapas's Ruilings Workspace</h1>
+        <h1 id="ruilings-heading" class="hero-title">Tapas Ruling Atlas by Manish</h1>
         <p class="hero-subtitle">
           Top-row filters, high-contrast cards, and decisive summaries designed for high-volume legal scanning.
         </p>
@@ -221,6 +229,14 @@
               Web References
             </h3>
             <div id="viewRuilingSources" class="view-sources"></div>
+          </section>
+
+          <section class="view-block" aria-labelledby="viewProvenanceHeading">
+            <h3 id="viewProvenanceHeading" class="view-block-title">
+              <i class="bi bi-database-check" aria-hidden="true"></i>
+              Data Provenance
+            </h3>
+            <p id="viewRuilingProvenance" class="view-block-text"></p>
           </section>
 
           <section class="view-related-wrap" aria-labelledby="viewRelatedHeading">
