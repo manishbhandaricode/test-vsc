@@ -384,49 +384,57 @@ function renderCards() {
           <span>|</span>
           <span>${entry.year || 'Year not captured'}</span>
         </div>
-        <p class="quicktake">${escapeHtml(truncate(entry.holding || entry.issue, 260))}</p>
-        <p class="detail-line"><strong>Issue:</strong> ${escapeHtml(truncate(entry.issue, 180))}</p>
+        <div class="record-block record-block-issue">
+          <h4>Issue Before Court</h4>
+          <p>${escapeHtml(entry.issue || 'Issue text is not available.')}</p>
+        </div>
+        <div class="record-block record-block-holding">
+          <h4>Holding / Ratio</h4>
+          <p>${escapeHtml(entry.holding || 'Holding text is not available.')}</p>
+        </div>
         <div class="summary-grid">
+          <div class="summary-box"><strong>Serial / ID</strong>#${String(entry.serial).padStart(3, '0')} / ${escapeHtml(String(entry.id))}</div>
           <div class="summary-box"><strong>Category</strong>${escapeHtml(entry.category)}</div>
           <div class="summary-box"><strong>Sub-category</strong>${escapeHtml(entry.subCategory)}</div>
+          <div class="summary-box"><strong>Stage</strong>${escapeHtml(entry.stage)}</div>
+          <div class="summary-box"><strong>Court</strong>${escapeHtml(entry.court)}</div>
+          <div class="summary-box"><strong>Year</strong>${entry.year || 'Year not captured'}</div>
         </div>
-        <p class="practice-note"><strong>Practice note:</strong> ${escapeHtml(truncate(entry.advocateNotes[0] || DEFAULT_NOTES[0], 190))}</p>
         <div class="tag-list">
           ${tags.length ? tags.map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`).join('') : '<span class="tag">No tags</span>'}
         </div>
-        <details class="full-intelligence">
-          <summary>Full intelligence</summary>
+        <div class="full-intelligence">
           <div class="full-intelligence-grid">
             <section>
-              <h4>Issue Before Court</h4>
-              <p>${escapeHtml(entry.issue || 'Issue text is not available.')}</p>
+              <h4>Complete Case Reference</h4>
+              <p>${escapeHtml(entry.caseReference || 'Case reference is not available.')}</p>
             </section>
             <section>
-              <h4>Holding / Ratio</h4>
-              <p>${escapeHtml(entry.holding || 'Holding text is not available.')}</p>
-            </section>
-            <section>
-              <h4>Practice Notes</h4>
-              ${renderInlineList(entry.advocateNotes, 'No practice notes added yet.')}
-            </section>
-            <section>
-              <h4>Counterpoints / Distinctions</h4>
-              ${renderInlineList(entry.relatedDetails, 'No counterpoints or related details added yet.')}
-            </section>
-            <section>
-              <h4>Statutory Anchors</h4>
+              <h4>All Statutory Anchors</h4>
               <div class="tag-list">${renderTagList(entry.statuteTags)}</div>
             </section>
             <section>
-              <h4>Web References</h4>
+              <h4>All Practice Notes / Courtroom Use Playbook</h4>
+              ${renderInlineList(entry.advocateNotes, 'No practice notes added yet.')}
+            </section>
+            <section>
+              <h4>All Counterpoints / Distinctions / Related Details</h4>
+              ${renderInlineList(entry.relatedDetails, 'No counterpoints or related details added yet.')}
+            </section>
+            <section>
+              <h4>All Web References</h4>
               ${renderInlineSources(entry.researchSources)}
+            </section>
+            <section>
+              <h4>Enhancement Metadata</h4>
+              <p>${escapeHtml(entry.enhancedByModel || 'No enhancement model captured.')} ${entry.webEnhancedOn ? `| ${escapeHtml(entry.webEnhancedOn)}` : ''}</p>
             </section>
             <section>
               <h4>Data Provenance</h4>
               <p>${escapeHtml(buildProvenance(entry))}</p>
             </section>
           </div>
-        </details>
+        </div>
         <div class="card-actions">
           <button class="mini-btn view" type="button" data-action="view" data-id="${entry.id}">View</button>
           <button class="mini-btn" type="button" data-action="copy" data-id="${entry.id}">Copy</button>
@@ -730,13 +738,13 @@ function renderInlineList(items, emptyText) {
 
 function renderSources(sources) {
   return sources.length
-    ? sources.slice(0, 8).map((url, index) => `<a class="source-link" href="${escapeAttribute(url)}" target="_blank" rel="noopener noreferrer">Source ${index + 1}: ${escapeHtml(shortUrl(url))}</a>`).join('')
+    ? sources.map((url, index) => `<a class="source-link" href="${escapeAttribute(url)}" target="_blank" rel="noopener noreferrer">Source ${index + 1}: ${escapeHtml(shortUrl(url))}</a>`).join('')
     : '<p class="muted">No web references captured for this entry.</p>';
 }
 
 function renderInlineSources(sources) {
   return sources.length
-    ? `<div class="inline-sources">${sources.slice(0, 8).map((url, index) => `<a href="${escapeAttribute(url)}" target="_blank" rel="noopener noreferrer">Source ${index + 1}: ${escapeHtml(shortUrl(url))}</a>`).join('')}</div>`
+    ? `<div class="inline-sources">${sources.map((url, index) => `<a href="${escapeAttribute(url)}" target="_blank" rel="noopener noreferrer">Source ${index + 1}: ${escapeHtml(shortUrl(url))}</a>`).join('')}</div>`
     : '<p>No web references captured for this entry.</p>';
 }
 

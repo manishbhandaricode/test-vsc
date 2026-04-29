@@ -568,22 +568,37 @@ h1 {
   line-height: 1.5;
 }
 
+.record-block {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-soft);
+  padding: 0.78rem;
+}
+
+.record-block h4 {
+  margin: 0 0 0.44rem;
+  color: var(--primary);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.record-block p {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 0.94rem;
+  line-height: 1.62;
+}
+
+.record-block-holding {
+  background: color-mix(in srgb, var(--primary-soft) 62%, var(--surface));
+}
+
 .full-intelligence {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--surface-soft);
-}
-
-.full-intelligence summary {
-  cursor: pointer;
-  padding: 0.75rem;
-  color: var(--primary);
-  font-weight: 900;
-  letter-spacing: 0.02em;
-}
-
-.full-intelligence[open] summary {
-  border-bottom: 1px solid var(--border);
 }
 
 .full-intelligence-grid {
