@@ -568,6 +568,72 @@ h1 {
   line-height: 1.5;
 }
 
+.full-intelligence {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-soft);
+}
+
+.full-intelligence summary {
+  cursor: pointer;
+  padding: 0.75rem;
+  color: var(--primary);
+  font-weight: 900;
+  letter-spacing: 0.02em;
+}
+
+.full-intelligence[open] summary {
+  border-bottom: 1px solid var(--border);
+}
+
+.full-intelligence-grid {
+  display: grid;
+  gap: 0.7rem;
+  padding: 0.75rem;
+}
+
+.full-intelligence-grid section {
+  display: grid;
+  gap: 0.38rem;
+}
+
+.full-intelligence-grid h4 {
+  margin: 0;
+  color: var(--text);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.full-intelligence-grid p,
+.inline-list {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 0.9rem;
+  line-height: 1.58;
+}
+
+.inline-list {
+  padding-left: 1.05rem;
+}
+
+.inline-list li {
+  margin-bottom: 0.34rem;
+}
+
+.inline-list li:last-child {
+  margin-bottom: 0;
+}
+
+.inline-sources {
+  display: grid;
+  gap: 0.4rem;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  word-break: break-word;
+}
+
 .tag-list {
   display: flex;
   flex-wrap: wrap;

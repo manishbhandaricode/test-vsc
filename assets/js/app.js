@@ -173,6 +173,7 @@ function bindEvents() {
   els.cardsGrid.addEventListener('click', async (event) => {
     const button = event.target.closest('button');
     const card = event.target.closest('.ruling-card');
+    const passiveInteractive = event.target.closest('details, summary, a');
 
     if (button?.dataset.action === 'view') openDetail(Number(button.dataset.id));
     if (button?.dataset.action === 'edit') openEditor(Number(button.dataset.id));
@@ -181,14 +182,14 @@ function bindEvents() {
       const entry = findEntry(Number(button.dataset.id));
       if (entry) await copyCitation(entry.caseReference);
     }
-    if (!button && card) openDetail(Number(card.dataset.id));
+    if (!button && !passiveInteractive && card) openDetail(Number(card.dataset.id));
   });
 
   els.cardsGrid.addEventListener('keydown', (event) => {
     if (event.key !== 'Enter' && event.key !== ' ') return;
     const card = event.target.closest('.ruling-card');
     if (!card) return;
-    const interactive = event.target.closest('button, a, input, textarea, select');
+    const interactive = event.target.closest('button, a, input, textarea, select, details, summary');
     if (interactive && interactive !== card) return;
     event.preventDefault();
     openDetail(Number(card.dataset.id));
@@ -393,6 +394,39 @@ function renderCards() {
         <div class="tag-list">
           ${tags.length ? tags.map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`).join('') : '<span class="tag">No tags</span>'}
         </div>
+        <details class="full-intelligence">
+          <summary>Full intelligence</summary>
+          <div class="full-intelligence-grid">
+            <section>
+              <h4>Issue Before Court</h4>
+              <p>${escapeHtml(entry.issue || 'Issue text is not available.')}</p>
+            </section>
+            <section>
+              <h4>Holding / Ratio</h4>
+              <p>${escapeHtml(entry.holding || 'Holding text is not available.')}</p>
+            </section>
+            <section>
+              <h4>Practice Notes</h4>
+              ${renderInlineList(entry.advocateNotes, 'No practice notes added yet.')}
+            </section>
+            <section>
+              <h4>Counterpoints / Distinctions</h4>
+              ${renderInlineList(entry.relatedDetails, 'No counterpoints or related details added yet.')}
+            </section>
+            <section>
+              <h4>Statutory Anchors</h4>
+              <div class="tag-list">${renderTagList(entry.statuteTags)}</div>
+            </section>
+            <section>
+              <h4>Web References</h4>
+              ${renderInlineSources(entry.researchSources)}
+            </section>
+            <section>
+              <h4>Data Provenance</h4>
+              <p>${escapeHtml(buildProvenance(entry))}</p>
+            </section>
+          </div>
+        </details>
         <div class="card-actions">
           <button class="mini-btn view" type="button" data-action="view" data-id="${entry.id}">View</button>
           <button class="mini-btn" type="button" data-action="copy" data-id="${entry.id}">Copy</button>
@@ -690,10 +724,20 @@ function renderList(items, emptyText) {
     : `<li>${escapeHtml(emptyText)}</li>`;
 }
 
+function renderInlineList(items, emptyText) {
+  return `<ul class="inline-list">${renderList(items, emptyText)}</ul>`;
+}
+
 function renderSources(sources) {
   return sources.length
     ? sources.slice(0, 8).map((url, index) => `<a class="source-link" href="${escapeAttribute(url)}" target="_blank" rel="noopener noreferrer">Source ${index + 1}: ${escapeHtml(shortUrl(url))}</a>`).join('')
     : '<p class="muted">No web references captured for this entry.</p>';
+}
+
+function renderInlineSources(sources) {
+  return sources.length
+    ? `<div class="inline-sources">${sources.slice(0, 8).map((url, index) => `<a href="${escapeAttribute(url)}" target="_blank" rel="noopener noreferrer">Source ${index + 1}: ${escapeHtml(shortUrl(url))}</a>`).join('')}</div>`
+    : '<p>No web references captured for this entry.</p>';
 }
 
 function buildProvenance(entry) {
