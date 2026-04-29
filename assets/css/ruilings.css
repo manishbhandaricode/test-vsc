@@ -19,6 +19,8 @@
   --success-soft: #f0fdf4;
   --warning-soft: #fff7ed;
   --danger-soft: #fef2f2;
+  --cursor-default: url("data:image/svg+xml,%3Csvg%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath%20d%3D%22M5%203.5L18.5%2012L12.1%2013.5L9%2020.3L5%203.5Z%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%230f172a%22%20stroke-width%3D%221.6%22%20stroke-linejoin%3D%22round%22/%3E%3Ccircle%20cx%3D%2217.5%22%20cy%3D%226.5%22%20r%3D%222.2%22%20fill%3D%22%232563eb%22/%3E%3C/svg%3E") 5 4, auto;
+  --cursor-pointer: url("data:image/svg+xml,%3Csvg%20width%3D%2226%22%20height%3D%2226%22%20viewBox%3D%220%200%2026%2026%22%20fill%3D%22none%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Ccircle%20cx%3D%2213%22%20cy%3D%2213%22%20r%3D%229%22%20fill%3D%22%23dbeafe%22%20stroke%3D%22%232563eb%22%20stroke-width%3D%222%22/%3E%3Ccircle%20cx%3D%2213%22%20cy%3D%2213%22%20r%3D%223%22%20fill%3D%22%230f172a%22/%3E%3C/svg%3E") 13 13, pointer;
 
   --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
   --shadow-md: 0 10px 24px rgba(15, 23, 42, 0.08);
@@ -52,6 +54,8 @@
   --success-soft: #103520;
   --warning-soft: #3a260d;
   --danger-soft: #3a1518;
+  --cursor-default: url("data:image/svg+xml,%3Csvg%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath%20d%3D%22M5%203.5L18.5%2012L12.1%2013.5L9%2020.3L5%203.5Z%22%20fill%3D%22%230f172a%22%20stroke%3D%22%23f8fafc%22%20stroke-width%3D%221.6%22%20stroke-linejoin%3D%22round%22/%3E%3Ccircle%20cx%3D%2217.5%22%20cy%3D%226.5%22%20r%3D%222.2%22%20fill%3D%22%2393c5fd%22/%3E%3C/svg%3E") 5 4, auto;
+  --cursor-pointer: url("data:image/svg+xml,%3Csvg%20width%3D%2226%22%20height%3D%2226%22%20viewBox%3D%220%200%2026%2026%22%20fill%3D%22none%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Ccircle%20cx%3D%2213%22%20cy%3D%2213%22%20r%3D%229%22%20fill%3D%22%23102a4f%22%20stroke%3D%22%2393c5fd%22%20stroke-width%3D%222%22/%3E%3Ccircle%20cx%3D%2213%22%20cy%3D%2213%22%20r%3D%223%22%20fill%3D%22%23f8fafc%22/%3E%3C/svg%3E") 13 13, pointer;
 
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.22);
   --shadow-md: 0 12px 28px rgba(0, 0, 0, 0.34);
@@ -77,6 +81,7 @@ body.ruilings-product {
   font-size: 17px;
   min-height: 100vh;
   position: relative;
+  cursor: var(--cursor-default);
 }
 
 body.ruilings-product::before {
@@ -91,6 +96,116 @@ body.ruilings-product::before {
   background-size: 46px 46px;
   animation: atlas-grid-drift 24s linear infinite;
   mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.42), transparent 72%);
+}
+
+.ambient-motion-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.product-topbar,
+main,
+.modal,
+.toast-container {
+  position: relative;
+}
+
+main {
+  z-index: 1;
+}
+
+.ambient-beam,
+.ambient-frame,
+.ambient-scan {
+  position: absolute;
+  display: block;
+  will-change: transform, opacity;
+}
+
+.ambient-beam {
+  width: min(66vw, 860px);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--primary) 62%, transparent), transparent);
+  opacity: 0.32;
+  transform: rotate(-18deg);
+  animation: ambient-beam-travel 18s linear infinite;
+}
+
+.ambient-beam-one {
+  top: 18%;
+  left: -18%;
+}
+
+.ambient-beam-two {
+  top: 52%;
+  right: -28%;
+  animation-delay: -6s;
+  animation-duration: 22s;
+}
+
+.ambient-beam-three {
+  bottom: 14%;
+  left: 8%;
+  animation-delay: -11s;
+  animation-duration: 24s;
+}
+
+.ambient-frame {
+  width: 168px;
+  height: 96px;
+  border: 1px solid color-mix(in srgb, var(--primary) 26%, var(--border));
+  border-radius: 14px;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--surface) 42%, transparent), color-mix(in srgb, var(--surface) 12%, transparent)),
+    linear-gradient(90deg, transparent 0 42%, color-mix(in srgb, var(--primary) 18%, transparent) 42% 43%, transparent 43% 100%);
+  box-shadow: var(--shadow-sm);
+  opacity: 0.3;
+  backdrop-filter: blur(10px);
+  animation: ambient-frame-drift 16s ease-in-out infinite;
+}
+
+.ambient-frame-one {
+  top: 18%;
+  right: 6%;
+}
+
+.ambient-frame-two {
+  top: 46%;
+  left: 3%;
+  width: 126px;
+  height: 78px;
+  animation-delay: -5s;
+}
+
+.ambient-frame-three {
+  right: 14%;
+  bottom: 16%;
+  width: 208px;
+  height: 108px;
+  animation-delay: -9s;
+}
+
+.ambient-scan {
+  width: 1px;
+  height: 42vh;
+  background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--primary) 50%, transparent), transparent);
+  opacity: 0.26;
+  animation: ambient-scan-drop 12s ease-in-out infinite;
+}
+
+.ambient-scan-one {
+  top: -10%;
+  left: 22%;
+}
+
+.ambient-scan-two {
+  top: 20%;
+  right: 28%;
+  animation-delay: -4s;
+  animation-duration: 15s;
 }
 
 .skip-link {
@@ -112,6 +227,18 @@ body.ruilings-product::before {
 
 a {
   color: var(--primary-ink);
+}
+
+a,
+button,
+select,
+summary,
+[role="button"],
+.ruiling-card,
+.theme-toggle,
+.mini-action-btn,
+.ruiling-page-btn {
+  cursor: var(--cursor-pointer);
 }
 
 a:hover {
@@ -221,13 +348,15 @@ a:hover {
   gap: 0.52rem;
   border: 1px solid var(--border);
   border-radius: 999px;
-  background: var(--surface);
+  background: color-mix(in srgb, var(--surface) 74%, transparent);
   color: var(--text-secondary);
   min-height: 42px;
   padding: 0.28rem 0.72rem 0.28rem 0.32rem;
   font-size: 0.88rem;
   font-weight: 760;
   transition: border-color 160ms ease, background 160ms ease, color 160ms ease;
+  backdrop-filter: blur(14px);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 42%, transparent), var(--shadow-sm);
 }
 
 .theme-toggle:hover {
@@ -288,7 +417,9 @@ a:hover {
   border: 1px solid var(--border);
   border-radius: 999px;
   padding: 0.45rem 0.8rem;
-  background: var(--surface);
+  background: color-mix(in srgb, var(--surface) 72%, transparent);
+  backdrop-filter: blur(14px);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 44%, transparent), var(--shadow-sm);
 }
 
 .topbar-link:hover {
@@ -485,6 +616,9 @@ body.topbar-collapsed .filters-toolbar {
 
   body.ruilings-product::before,
   .panel-card::before,
+  .ambient-beam,
+  .ambient-frame,
+  .ambient-scan,
   .motion-rail,
   .motion-tile {
     animation: none;
@@ -520,11 +654,12 @@ body.topbar-collapsed .filters-toolbar {
 .form-select.form-control-custom {
   border: 1px solid var(--border-strong);
   color: var(--text);
-  background: var(--surface-soft);
+  background: color-mix(in srgb, var(--surface-soft) 86%, transparent);
   border-radius: 10px;
   font-size: 0.96rem;
   padding: 0.55rem 0.66rem;
   line-height: 1.38;
+  backdrop-filter: blur(12px);
 }
 
 .form-control-custom::placeholder {
@@ -545,12 +680,14 @@ body.topbar-collapsed .filters-toolbar {
   gap: 0.38rem;
   width: 100%;
   border-radius: 10px;
-  background: var(--primary);
-  border: 1px solid var(--primary);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--primary) 82%, #fff), var(--primary));
+  border: 1px solid color-mix(in srgb, var(--primary) 72%, #fff);
   color: #fff;
   font-size: 0.94rem;
   font-weight: 700;
   min-height: 41px;
+  box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 35%, transparent), 0 12px 22px color-mix(in srgb, var(--primary) 18%, transparent);
+  backdrop-filter: blur(14px);
 }
 
 .reset-btn:hover {
@@ -560,8 +697,8 @@ body.topbar-collapsed .filters-toolbar {
 }
 
 .add-btn {
-  background: #0f172a;
-  border-color: #0f172a;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--surface-contrast) 86%, #fff), var(--surface-contrast));
+  border-color: color-mix(in srgb, var(--surface-contrast) 78%, #fff);
 }
 
 .add-btn:hover {
@@ -1101,13 +1238,15 @@ body.topbar-collapsed .filters-toolbar {
 
 .ruiling-page-btn {
   border: 1px solid var(--border-strong);
-  background: var(--surface);
+  background: color-mix(in srgb, var(--surface) 76%, transparent);
   color: var(--text-secondary);
   border-radius: 10px;
   min-width: 36px;
   min-height: 36px;
   font-size: 0.8rem;
   font-weight: 700;
+  backdrop-filter: blur(12px);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 40%, transparent);
 }
 
 .ruiling-page-btn:hover {
@@ -1128,7 +1267,7 @@ body.topbar-collapsed .filters-toolbar {
 
 .mini-action-btn {
   border: 1px solid var(--border-strong);
-  background: var(--surface);
+  background: color-mix(in srgb, var(--surface) 78%, transparent);
   color: var(--text-secondary);
   border-radius: 8px;
   padding: 0.2rem 0.48rem;
@@ -1138,6 +1277,8 @@ body.topbar-collapsed .filters-toolbar {
   align-items: center;
   justify-content: center;
   gap: 0.34rem;
+  backdrop-filter: blur(12px);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 40%, transparent);
 }
 
 .mini-action-btn:hover {
@@ -1147,7 +1288,7 @@ body.topbar-collapsed .filters-toolbar {
 
 .view-btn {
   border-color: color-mix(in srgb, var(--primary) 45%, var(--border));
-  background: var(--primary-soft);
+  background: color-mix(in srgb, var(--primary-soft) 78%, transparent);
   color: var(--primary-ink);
 }
 
@@ -1516,6 +1657,51 @@ body.topbar-collapsed .filters-toolbar {
 
   50% {
     transform: translate3d(-16px, 8px, 0) rotate(-7deg);
+  }
+}
+
+@keyframes ambient-beam-travel {
+  0% {
+    transform: translate3d(-18%, 0, 0) rotate(-18deg);
+    opacity: 0;
+  }
+
+  18%,
+  72% {
+    opacity: 0.34;
+  }
+
+  100% {
+    transform: translate3d(24%, 0, 0) rotate(-18deg);
+    opacity: 0;
+  }
+}
+
+@keyframes ambient-frame-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(-4deg);
+  }
+
+  50% {
+    transform: translate3d(18px, -16px, 0) rotate(3deg);
+  }
+}
+
+@keyframes ambient-scan-drop {
+  0% {
+    transform: translate3d(0, -34%, 0);
+    opacity: 0;
+  }
+
+  28%,
+  70% {
+    opacity: 0.3;
+  }
+
+  100% {
+    transform: translate3d(0, 58%, 0);
+    opacity: 0;
   }
 }
 

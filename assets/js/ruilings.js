@@ -127,9 +127,7 @@
   }
 
   function initTheme() {
-    const savedTheme = readSavedTheme();
-    const systemPrefersDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches;
-    applyTheme(savedTheme || (systemPrefersDark ? 'dark' : 'light'), false);
+    applyTheme('light', false);
   }
 
   function readSavedTheme() {
