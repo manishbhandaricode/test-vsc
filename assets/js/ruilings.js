@@ -485,14 +485,22 @@
       return;
     }
 
+    const statusText = String(message || '').trim();
+    if (!statusText) {
+      els.serverWarmStatus.hidden = true;
+      els.serverWarmStatusText.textContent = '';
+      return;
+    }
+
+    els.serverWarmStatus.hidden = false;
     els.serverWarmStatus.classList.remove('ready', 'checking', 'waking');
     els.serverWarmStatus.classList.add(normalized);
-    els.serverWarmStatusText.textContent = String(message || '').trim() || 'Connecting secure server...';
+    els.serverWarmStatusText.textContent = statusText;
   }
 
   async function warmupApi({ silent = true, timeoutMs = 10000 } = {}) {
     if (!API_BASE) {
-      setServerWarmStatus('ready', 'Server connection not required.');
+      setServerWarmStatus('ready', '');
       return true;
     }
     if (warmupInFlight) {
@@ -547,7 +555,7 @@
 
   function initApiWarmup() {
     if (!API_BASE) {
-      setServerWarmStatus('ready', 'Server connection not required.');
+      setServerWarmStatus('ready', '');
       return;
     }
 
