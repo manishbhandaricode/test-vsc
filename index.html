@@ -26,13 +26,16 @@
 
     <div class="topbar-actions">
       <button class="icon-btn" id="themeToggle" type="button" aria-label="Switch to dark mode" title="Theme">
-        <span id="themeIcon" aria-hidden="true">☾</span>
+        <span id="themeIcon" aria-hidden="true">D</span>
         <span id="themeLabel">Dark</span>
       </button>
       <button class="icon-btn" id="exportBtn" type="button" title="Export current data">
-        <span aria-hidden="true">⇩</span>
+        <span aria-hidden="true">EX</span>
         Export
       </button>
+      <a class="icon-btn" href="https://tapasmitra.com/" target="_blank" rel="noopener noreferrer" title="Open main website">
+        Main Website
+      </a>
     </div>
   </header>
 
@@ -118,7 +121,13 @@
             <p class="panel-kicker">Catalogue</p>
             <h2 id="resultCount">Loading ruilings...</h2>
           </div>
-          <div class="active-filters" id="activeFilters"></div>
+          <div class="results-tools">
+            <div class="status-pill ready" id="workspaceStatus" role="status" aria-live="polite">
+              <span class="status-dot" aria-hidden="true"></span>
+              <span id="workspaceStatusText">Local workspace ready</span>
+            </div>
+            <div class="active-filters" id="activeFilters"></div>
+          </div>
         </div>
 
         <div class="cards-grid" id="cardsGrid" aria-live="polite"></div>
@@ -135,7 +144,7 @@
           <h2 id="detailTitle">Case Details</h2>
           <p id="detailMeta" class="muted"></p>
         </div>
-        <button class="close-btn" type="button" data-close-modal="detailModal" aria-label="Close">×</button>
+        <button class="close-btn" type="button" data-close-modal="detailModal" aria-label="Close">x</button>
       </div>
 
       <div class="modal-body detail-grid">
@@ -163,6 +172,10 @@
           <h3>Web References</h3>
           <div id="detailSources" class="sources-list"></div>
         </section>
+        <section class="detail-block">
+          <h3>Data Provenance</h3>
+          <p id="detailProvenance"></p>
+        </section>
         <section class="detail-block detail-related">
           <div class="related-head">
             <h3>Companion Authorities</h3>
@@ -189,7 +202,7 @@
           <h2 id="editorTitle">Add Ruiling</h2>
           <p class="muted">Enter the required fields. Optional fields improve filtering, detail views, and companion authority matching.</p>
         </div>
-        <button class="close-btn" type="button" data-close-modal="editorModal" aria-label="Close">×</button>
+        <button class="close-btn" type="button" data-close-modal="editorModal" aria-label="Close">x</button>
       </div>
 
       <div class="modal-body editor-grid">
@@ -236,6 +249,10 @@
         <label class="control wide" for="relatedDetailsInput">
           <span>Related Details</span>
           <textarea id="relatedDetailsInput" rows="3" placeholder="One point per line"></textarea>
+        </label>
+        <label class="control wide" for="sourcesInput">
+          <span>Web References</span>
+          <textarea id="sourcesInput" rows="3" placeholder="One URL per line"></textarea>
         </label>
       </div>
 

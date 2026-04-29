@@ -8,7 +8,9 @@ A Vercel-ready legal ruling dashboard rebuilt from scratch by Manish with a prem
 - Keyword search, category, sub-category, stage, court, and sort filters
 - Result cards with pagination
 - Detail modal with issue, holding, tags, notes, sources, and companion authorities
-- Add, edit, delete, copy citation, reset, export, and theme switch controls
+- Data provenance, web references, source badges, and practice notes
+- Add, edit, delete, copy citation, reset, export, main website, and theme switch controls
+- Keyboard-accessible cards and search relevance ranking
 - Local browser persistence for edits and custom rulings
 - Static deployment on Vercel with no build step
 

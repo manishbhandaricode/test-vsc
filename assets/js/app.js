@@ -16,6 +16,7 @@ const state = {
   entries: [],
   filtered: [],
   relatedMap: {},
+  meta: {},
   page: 1,
   search: '',
   category: 'all',
@@ -50,6 +51,7 @@ const els = {
   openAddBtn: document.getElementById('openAddBtn'),
   resultCount: document.getElementById('resultCount'),
   activeFilters: document.getElementById('activeFilters'),
+  workspaceStatusText: document.getElementById('workspaceStatusText'),
   cardsGrid: document.getElementById('cardsGrid'),
   pagination: document.getElementById('pagination'),
   detailModal: document.getElementById('detailModal'),
@@ -61,6 +63,7 @@ const els = {
   detailNotes: document.getElementById('detailNotes'),
   detailRelatedDetails: document.getElementById('detailRelatedDetails'),
   detailSources: document.getElementById('detailSources'),
+  detailProvenance: document.getElementById('detailProvenance'),
   relatedHint: document.getElementById('relatedHint'),
   relatedList: document.getElementById('relatedList'),
   copyDetailBtn: document.getElementById('copyDetailBtn'),
@@ -82,6 +85,7 @@ const els = {
   tagsInput: document.getElementById('tagsInput'),
   notesInput: document.getElementById('notesInput'),
   relatedDetailsInput: document.getElementById('relatedDetailsInput'),
+  sourcesInput: document.getElementById('sourcesInput'),
   toastWrap: document.getElementById('toastWrap')
 };
 
@@ -109,12 +113,16 @@ async function loadData() {
       ? await relatedResponse.json()
       : {};
 
+    state.meta = payload.meta || {};
     state.baseEntries = (payload.entries || []).map(normalizeEntry);
     state.relatedMap = relatedPayload.related || {};
     state.local = readLocalState();
     rebuildEntries();
     populateFilters();
     renderAll();
+    if (els.workspaceStatusText) {
+      els.workspaceStatusText.textContent = `Local workspace ready | Source entries: ${state.meta.totalEntries || state.baseEntries.length}`;
+    }
     showToast('Atlas Ready', `${state.entries.length} ruilings loaded into the workspace.`);
   } catch (error) {
     console.error(error);
@@ -176,6 +184,16 @@ function bindEvents() {
     if (!button && card) openDetail(Number(card.dataset.id));
   });
 
+  els.cardsGrid.addEventListener('keydown', (event) => {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    const card = event.target.closest('.ruling-card');
+    if (!card) return;
+    const interactive = event.target.closest('button, a, input, textarea, select');
+    if (interactive && interactive !== card) return;
+    event.preventDefault();
+    openDetail(Number(card.dataset.id));
+  });
+
   els.pagination.addEventListener('click', (event) => {
     const button = event.target.closest('button[data-page]');
     if (!button) return;
@@ -215,6 +233,8 @@ function normalizeEntry(entry) {
     advocateNotes: uniqueList(entry.advocateNotes || DEFAULT_NOTES),
     relatedDetails: uniqueList(entry.relatedDetails || []),
     researchSources: uniqueList(entry.researchSources || []),
+    webEnhancedOn: oneLine(entry.webEnhancedOn || ''),
+    enhancedByModel: oneLine(entry.enhancedByModel || ''),
     localDraft: Boolean(entry.localDraft)
   };
 }
@@ -299,6 +319,10 @@ function applyFilters() {
   if (state.court !== 'all') out = out.filter((entry) => entry.court === state.court);
 
   out.sort((a, b) => {
+    if (query) {
+      const scoreDelta = scoreSearchResult(b, query) - scoreSearchResult(a, query);
+      if (scoreDelta !== 0) return scoreDelta;
+    }
     if (state.sort === 'serial-desc') return (b.serial || 0) - (a.serial || 0);
     if (state.sort === 'year-desc') return (b.year || 0) - (a.year || 0);
     if (state.sort === 'year-asc') return (a.year || 0) - (b.year || 0);
@@ -342,6 +366,10 @@ function renderCards() {
 
   els.cardsGrid.innerHTML = pageEntries.map((entry) => {
     const tags = entry.statuteTags.slice(0, 4);
+    const badges = [
+      entry.localDraft ? '<span class="source-badge">Local Draft</span>' : '',
+      entry.enhancedByModel ? '<span class="source-badge">Web Enhanced</span>' : ''
+    ].filter(Boolean).join('');
     return `
       <article class="ruling-card" data-id="${entry.id}" tabindex="0" aria-label="${escapeAttribute(entry.caseReference)}">
         <div class="card-top">
@@ -349,17 +377,19 @@ function renderCards() {
           <span class="stage-pill">${escapeHtml(entry.stage)}</span>
         </div>
         <h3 class="ruling-title">${escapeHtml(entry.caseReference)}</h3>
-        ${entry.localDraft ? '<span class="source-badge">Local Draft</span>' : ''}
+        ${badges ? `<div class="meta-row">${badges}</div>` : ''}
         <div class="meta-row">
           <span>${escapeHtml(entry.court)}</span>
-          <span>•</span>
+          <span>|</span>
           <span>${entry.year || 'Year not captured'}</span>
         </div>
-        <p class="quicktake">${escapeHtml(truncate(entry.holding || entry.issue, 240))}</p>
+        <p class="quicktake">${escapeHtml(truncate(entry.holding || entry.issue, 260))}</p>
+        <p class="detail-line"><strong>Issue:</strong> ${escapeHtml(truncate(entry.issue, 180))}</p>
         <div class="summary-grid">
           <div class="summary-box"><strong>Category</strong>${escapeHtml(entry.category)}</div>
           <div class="summary-box"><strong>Sub-category</strong>${escapeHtml(entry.subCategory)}</div>
         </div>
+        <p class="practice-note"><strong>Practice note:</strong> ${escapeHtml(truncate(entry.advocateNotes[0] || DEFAULT_NOTES[0], 190))}</p>
         <div class="tag-list">
           ${tags.length ? tags.map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`).join('') : '<span class="tag">No tags</span>'}
         </div>
@@ -383,12 +413,12 @@ function renderPagination() {
 
   const pages = getVisiblePages(totalPages, state.page);
   els.pagination.innerHTML = `
-    <button class="page-btn" type="button" data-page="${state.page - 1}" ${state.page === 1 ? 'disabled' : ''}>‹</button>
-    ${pages.map((page) => page === '…'
-      ? '<button class="page-btn" type="button" disabled>…</button>'
+    <button class="page-btn" type="button" data-page="${state.page - 1}" ${state.page === 1 ? 'disabled' : ''}>&lt;</button>
+    ${pages.map((page) => page === '...'
+      ? '<button class="page-btn" type="button" disabled>...</button>'
       : `<button class="page-btn ${page === state.page ? 'active' : ''}" type="button" data-page="${page}">${page}</button>`
     ).join('')}
-    <button class="page-btn" type="button" data-page="${state.page + 1}" ${state.page === totalPages ? 'disabled' : ''}>›</button>
+    <button class="page-btn" type="button" data-page="${state.page + 1}" ${state.page === totalPages ? 'disabled' : ''}>&gt;</button>
   `;
 }
 
@@ -405,6 +435,7 @@ function openDetail(entryId) {
   els.detailNotes.innerHTML = renderList(entry.advocateNotes, 'No playbook notes added yet.');
   els.detailRelatedDetails.innerHTML = renderList(entry.relatedDetails, 'No counterpoints or related details added yet.');
   els.detailSources.innerHTML = renderSources(entry.researchSources);
+  els.detailProvenance.textContent = buildProvenance(entry);
   renderRelated(entry);
   openModal(els.detailModal);
 }
@@ -477,6 +508,7 @@ function openEditor(entryId = null) {
   els.tagsInput.value = (entry?.statuteTags || []).join(', ');
   els.notesInput.value = (entry?.advocateNotes || []).join('\n');
   els.relatedDetailsInput.value = (entry?.relatedDetails || []).join('\n');
+  els.sourcesInput.value = (entry?.researchSources || []).join('\n');
 
   closeModal('detailModal');
   openModal(els.editorModal);
@@ -510,7 +542,9 @@ function saveEditorEntry(event) {
     statuteTags: splitCommaList(els.tagsInput.value),
     advocateNotes: splitLineList(els.notesInput.value),
     relatedDetails: splitLineList(els.relatedDetailsInput.value),
-    researchSources: existing?.researchSources || [],
+    researchSources: splitLineList(els.sourcesInput.value),
+    webEnhancedOn: existing?.webEnhancedOn || '',
+    enhancedByModel: existing?.enhancedByModel || '',
     localDraft: true
   });
 
@@ -564,7 +598,7 @@ function exportData() {
     meta: {
       exportedOn: new Date().toISOString(),
       totalEntries: state.entries.length,
-      note: 'Exported from Premium Rulings Atlas local browser workspace.'
+      note: 'Exported from Tapas Ruling Atlas by Manish local browser workspace.'
     },
     entries: state.entries
   };
@@ -606,7 +640,7 @@ function closeModal(modalId) {
 function applyTheme(theme) {
   document.documentElement.dataset.theme = theme;
   localStorage.setItem(THEME_KEY, theme);
-  els.themeIcon.textContent = theme === 'dark' ? '☀' : '☾';
+  els.themeIcon.textContent = theme === 'dark' ? 'L' : 'D';
   els.themeLabel.textContent = theme === 'dark' ? 'Light' : 'Dark';
   els.themeToggle.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
 }
@@ -662,6 +696,15 @@ function renderSources(sources) {
     : '<p class="muted">No web references captured for this entry.</p>';
 }
 
+function buildProvenance(entry) {
+  const details = [];
+  details.push(entry.localDraft ? 'Local browser draft' : 'Bundled public atlas dataset');
+  if (state.meta.source) details.push(`Source: ${state.meta.source}`);
+  if (entry.webEnhancedOn) details.push(`Web enhanced on ${entry.webEnhancedOn}`);
+  if (entry.enhancedByModel) details.push(`Enhanced by ${entry.enhancedByModel}`);
+  return details.join(' | ');
+}
+
 function showToast(title, message) {
   const toast = document.createElement('div');
   toast.className = 'toast';
@@ -675,7 +718,7 @@ function getVisiblePages(totalPages, currentPage) {
   const sorted = [...pages].filter((page) => page >= 1 && page <= totalPages).sort((a, b) => a - b);
   const out = [];
   sorted.forEach((page, index) => {
-    if (index > 0 && page - sorted[index - 1] > 1) out.push('…');
+    if (index > 0 && page - sorted[index - 1] > 1) out.push('...');
     out.push(page);
   });
   return out;
@@ -691,8 +734,25 @@ function searchableText(entry) {
     entry.court,
     entry.stage,
     entry.statuteTags.join(' '),
-    entry.advocateNotes.join(' ')
+    entry.advocateNotes.join(' '),
+    entry.relatedDetails.join(' '),
+    entry.researchSources.join(' ')
   ].join(' '));
+}
+
+function scoreSearchResult(entry, query) {
+  const normalizedQuery = normalizeSearch(query);
+  let score = 0;
+  if (normalizeSearch(entry.caseReference).includes(normalizedQuery)) score += 80;
+  if (normalizeSearch(entry.issue).includes(normalizedQuery)) score += 45;
+  if (normalizeSearch(entry.holding).includes(normalizedQuery)) score += 35;
+  if (normalizeSearch(entry.category).includes(normalizedQuery)) score += 18;
+  if (normalizeSearch(entry.subCategory).includes(normalizedQuery)) score += 18;
+  entry.statuteTags.forEach((tag) => {
+    if (normalizeSearch(tag).includes(normalizedQuery)) score += 12;
+  });
+  score += intersectionSize(keywordSet(normalizedQuery), keywordSet(searchableText(entry))) * 3;
+  return score;
 }
 
 function keywordSet(text) {
@@ -775,13 +835,13 @@ function normalizeSearch(value) {
 
 function truncate(value, maxLength) {
   const text = oneLine(value);
-  return text.length > maxLength ? `${text.slice(0, maxLength - 1)}…` : text;
+  return text.length > maxLength ? `${text.slice(0, maxLength - 3)}...` : text;
 }
 
 function shortUrl(url) {
   try {
     const parsed = new URL(url);
-    const path = parsed.pathname.length > 34 ? `${parsed.pathname.slice(0, 31)}…` : parsed.pathname;
+    const path = parsed.pathname.length > 34 ? `${parsed.pathname.slice(0, 31)}...` : parsed.pathname;
     return `${parsed.hostname.replace(/^www\./, '')}${path}`;
   } catch (error) {
     return url;
